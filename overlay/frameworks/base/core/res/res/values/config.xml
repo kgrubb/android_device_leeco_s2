@@ -104,7 +104,7 @@
         <item>225</item>
         <item>255</item>
     </integer-array>
-    
+
     <!-- Array of output values for button backlight corresponding to the LUX values
          in the config_autoBrightnessLevels array.  This array should have size one greater
          than the size of the config_autoBrightnessLevels array.
@@ -131,10 +131,10 @@
         <item>225</item>
         <item>255</item>
     </integer-array>
-        
+
     <!-- Enable adjusting the button backlight -->
     <bool name="config_deviceHasVariableButtonBrightness">true</bool>
-    
+
     <!-- Vibrator pattern for feedback about a long screen/key press -->
     <integer-array name="config_longPressVibePattern">
         <item>0</item>
@@ -160,7 +160,7 @@
         <item>30</item>
         <item>15</item>
     </integer-array>
-    
+
     <!-- If this is true, the screen will come on when you unplug usb/power/whatever. -->
     <bool name="config_unplugTurnsOnScreen">true</bool>
 
@@ -203,7 +203,7 @@
         <item>"bnep\\d"</item>
         <item>"bt-pan"</item>
     </string-array>
-    
+
     <!-- MMS user agent string -->
     <string name="config_mms_user_agent" translatable="false">Android-Mms/2.0</string>
 
@@ -287,7 +287,7 @@
 
     <!-- Flag specifying whether or not IMS will use the ImsResolver dynamically -->
     <bool name="config_dynamic_bind_ims">true</bool>
-    
+
     <!-- Wifi driver supports batched scan -->
     <bool translatable="false" name="config_wifi_batched_scan_supported">false</bool>
 
@@ -363,7 +363,7 @@
          Refer to power.h for details.
     -->
     <bool name="config_powerDecoupleInteractiveModeFromDisplay">true</bool>
-    
+
     <!-- Indicate whether closing the lid causes the device to go to sleep and opening
          it causes the device to wake up.
          The default is false. -->
@@ -433,8 +433,6 @@
         <item>"/system/framework/boot.vdex"</item>
         <item>"/system/framework/arm64/boot-core-libart.oat"</item>
         <item>"/system/framework/boot-core-libart.vdex"</item>
-        <item>"/system/framework/boot-QPerformance.vdex"</item>
-        <item>"/system/framework/boot-UxPerformance.vdex"</item>
         <item>"/system/lib64/libsurfaceflinger.so"</item>
     </string-array>
 
