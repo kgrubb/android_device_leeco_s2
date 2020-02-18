@@ -23,14 +23,14 @@ import android.os.UserHandle;
 import android.util.Log;
 
 public class Startup extends BroadcastReceiver {
-    private static final String TAG = "ConsumerirTransmitter";
+  private static final String TAG = "ConsumerirTransmitter";
 
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        final String action = intent.getAction();
-        if (action.equalsIgnoreCase(Intent.ACTION_BOOT_COMPLETED)) {
-            Log.d(TAG, "Starting");
-            context.startServiceAsUser(new Intent(context, ConsumerirTransmitterService.class), UserHandle.CURRENT);
-        }
+  @Override
+  public void onReceive(Context context, Intent intent) {
+    final String action = intent.getAction();
+    if (action.equalsIgnoreCase(Intent.ACTION_BOOT_COMPLETED)) {
+      Log.d(TAG, "Starting");
+      context.startServiceAsUser(new Intent(context, ConsumerirTransmitterService.class), UserHandle.CURRENT);
     }
+  }
 }

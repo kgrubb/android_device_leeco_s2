@@ -36,22 +36,22 @@ on init
     # QSEE rpmb listener need symlink for bootdevice
     wait /dev/block/platform/soc.0/${ro.boot.bootdevice}
     symlink /dev/block/platform/soc.0/${ro.boot.bootdevice} /dev/block/bootdevice
-
+    
     # Start qseecomd early as we mount system/ early
     # vold needs keymaster which needs qseecomd
     start vendor.qseecomd
-
+    
     write /sys/module/qpnp_rtc/parameters/poweron_alarm 1
 
 on fs
     # Start HW service manager early
     start hwservicemanager
-
+    
     mount_all /system/vendor/etc/fstab.qcom --early
 
     mkdir /persist/data 0700 system system
 
-    # Bluetooth
+    # Bluetooth 
     mkdir /persist/wlan_bt 0700 system system
 
 on post-fs
@@ -220,7 +220,7 @@ service vendor.imsqmidaemon /system/vendor/bin/imsqmidaemon
     socket ims_qmid stream 0660 system radio
     group radio log diag
     writepid /dev/cpuset/system-background/tasks
-
+    
 service vendor.imsdatadaemon /system/vendor/bin/imsdatadaemon
     class main
     user radio
