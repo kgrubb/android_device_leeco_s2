@@ -33,11 +33,11 @@
 #include "mm_jpeg_dbg.h"
 #include "mm_jpeg_mpo.h"
 
-#define M_APP0    0xe0
-#define M_APP1    0xe1
-#define M_APP2    0xe2
-#define M_EOI     0xd9
-#define M_SOI     0xd8
+#define M_APP0 0xe0
+#define M_APP1 0xe1
+#define M_APP2 0xe2
+#define M_EOI 0xd9
+#define M_SOI 0xd8
 
 /** READ_LONG:
  *  @b: Buffer start addr
@@ -45,11 +45,11 @@
  *
  *  Read long value from the specified buff addr at given offset
  **/
-#define READ_LONG(b, o)  \
-  (uint32_t)(((uint32_t)b[o] << 24) + \
-  ((uint32_t)b[o+1] << 16) + \
-  ((uint32_t)b[o+2] << 8) + \
-  ((uint32_t)b[o+3]))
+#define READ_LONG(b, o)                   \
+  (uint32_t)(((uint32_t)b[o] << 24) +     \
+             ((uint32_t)b[o + 1] << 16) + \
+             ((uint32_t)b[o + 2] << 8) +  \
+             ((uint32_t)b[o + 3]))
 
 /** READ_LONG_LITTLE:
  *  @b: Buffer start addr
@@ -58,11 +58,11 @@
  *  Read long value from the specified buff addr at given offset
  *  in Little Endian
  **/
-#define READ_LONG_LITTLE(b, o)  \
+#define READ_LONG_LITTLE(b, o)            \
   (uint32_t)(((uint32_t)b[o + 3] << 24) + \
-  ((uint32_t) b[o + 2] << 16) + \
-  ((uint32_t) b[o + 1] << 8) + \
-  (uint32_t) b[o]);
+             ((uint32_t)b[o + 2] << 16) + \
+             ((uint32_t)b[o + 1] << 8) +  \
+             (uint32_t)b[o]);
 
 /** READ_LONG:
  *  @b: Buffer start addr
@@ -71,9 +71,9 @@
  *  Read short value from the specified buff addr at given
  *  offset
  **/
-#define READ_SHORT(b, o)  \
-  (uint16_t) (((uint16_t)b[o] << 8) + \
-  (uint16_t) b[o + 1]);
+#define READ_SHORT(b, o)             \
+  (uint16_t)(((uint16_t)b[o] << 8) + \
+             (uint16_t)b[o + 1]);
 
 /*Mutex to serializa MPO composition*/
 static pthread_mutex_t g_mpo_lock = PTHREAD_MUTEX_INITIALIZER;
@@ -95,13 +95,15 @@ static pthread_mutex_t g_mpo_lock = PTHREAD_MUTEX_INITIALIZER;
  *
  **/
 void mm_jpeg_mpo_write_long_little_endian(uint8_t *buff_addr, uint32_t buff_offset,
-  uint32_t buffer_size, int value, uint8_t *overflow)
+                                          uint32_t buffer_size, int value, uint8_t *overflow)
 {
-  if (buff_offset + 3 >= buffer_size) {
+  if (buff_offset + 3 >= buffer_size)
+  {
     *overflow = TRUE;
   }
 
-  if (!(*overflow)) {
+  if (!(*overflow))
+  {
     buff_addr[buff_offset + 3] = (uint8_t)((value >> 24) & 0xFF);
     buff_addr[buff_offset + 2] = (uint8_t)((value >> 16) & 0xFF);
     buff_addr[buff_offset + 1] = (uint8_t)((value >> 8) & 0xFF);
@@ -126,17 +128,19 @@ void mm_jpeg_mpo_write_long_little_endian(uint8_t *buff_addr, uint32_t buff_offs
  *
  **/
 void mm_jpeg_mpo_write_long(uint8_t *buff_addr, uint32_t buff_offset,
-  uint32_t buffer_size, int value, uint8_t *overflow)
+                            uint32_t buffer_size, int value, uint8_t *overflow)
 {
-  if ((buff_offset + 3) >= buffer_size) {
+  if ((buff_offset + 3) >= buffer_size)
+  {
     *overflow = TRUE;
   }
 
-  if (!(*overflow)) {
+  if (!(*overflow))
+  {
     buff_addr[buff_offset] = (uint8_t)((value >> 24) & 0xFF);
-    buff_addr[buff_offset+1] = (uint8_t)((value >> 16) & 0xFF);
-    buff_addr[buff_offset+2] = (uint8_t)((value >> 8) & 0xFF);
-    buff_addr[buff_offset+3] = (uint8_t)(value & 0xFF);
+    buff_addr[buff_offset + 1] = (uint8_t)((value >> 16) & 0xFF);
+    buff_addr[buff_offset + 2] = (uint8_t)((value >> 8) & 0xFF);
+    buff_addr[buff_offset + 3] = (uint8_t)(value & 0xFF);
   }
 }
 
@@ -155,23 +159,25 @@ void mm_jpeg_mpo_write_long(uint8_t *buff_addr, uint32_t buff_offset,
  *
  **/
 uint8_t *mm_jpeg_mpo_get_app_marker(uint8_t *buffer_addr, int buffer_size,
-  int app_marker)
+                                    int app_marker)
 {
   int32_t byte;
   uint8_t *p_current_addr = NULL, *p_start_offset = NULL;
   uint16_t app_marker_size = 0;
 
   p_current_addr = buffer_addr;
-  do {
-    do {
+  do
+  {
+    do
+    {
       byte = *(p_current_addr);
       p_current_addr++;
-    }
-    while ((byte != 0xFF) &&
-      (p_current_addr < (buffer_addr + (buffer_size - 1))));
+    } while ((byte != 0xFF) &&
+             (p_current_addr < (buffer_addr + (buffer_size - 1))));
 
     //If 0xFF is not found at all, break
-    if (byte != 0xFF) {
+    if (byte != 0xFF)
+    {
       CDBG("%s %d: 0xFF not found", __func__, __LINE__);
       break;
     }
@@ -179,18 +185,20 @@ uint8_t *mm_jpeg_mpo_get_app_marker(uint8_t *buffer_addr, int buffer_size,
     //Read the next byte after 0xFF
     byte = *(p_current_addr);
     CDBG("%s %d: Byte %x", __func__, __LINE__, byte);
-    if (byte == app_marker) {
+    if (byte == app_marker)
+    {
       CDBG("%s %d: Byte %x", __func__, __LINE__, byte);
       p_start_offset = ++p_current_addr;
       break;
-    } else if (byte != M_SOI) {
+    }
+    else if (byte != M_SOI)
+    {
       app_marker_size = READ_SHORT(p_current_addr, 1);
       CDBG("%s %d: size %d", __func__, __LINE__, app_marker_size);
       p_current_addr += app_marker_size;
     }
-  }
-  while ((byte != M_EOI) &&
-    (p_current_addr < (buffer_addr + (buffer_size - 1))));
+  } while ((byte != M_EOI) &&
+           (p_current_addr < (buffer_addr + (buffer_size - 1))));
 
   return p_start_offset;
 }
@@ -213,9 +221,10 @@ uint8_t *mm_jpeg_mpo_get_mp_header(uint8_t *app2_start_offset)
 {
   uint8_t *mp_headr_start_offset = NULL;
 
-  if (app2_start_offset != NULL) {
+  if (app2_start_offset != NULL)
+  {
     mp_headr_start_offset = app2_start_offset + MP_APP2_FIELD_LENGTH_BYTES +
-      MP_FORMAT_IDENTIFIER_BYTES;
+                            MP_FORMAT_IDENTIFIER_BYTES;
   }
 
   return mp_headr_start_offset;
@@ -247,25 +256,27 @@ int mm_jpeg_mpo_update_header(mm_jpeg_mpo_info_t *mpo_info)
 
   //Get the addr of the App Marker
   app2_start_off_addr = mm_jpeg_mpo_get_app_marker(
-    mpo_info->output_buff.buf_vaddr, mpo_info->primary_image.buf_filled_len, M_APP2);
-  if (!app2_start_off_addr) {
+      mpo_info->output_buff.buf_vaddr, mpo_info->primary_image.buf_filled_len, M_APP2);
+  if (!app2_start_off_addr)
+  {
     CDBG_ERROR("%s %d:] Cannot find App2 marker. MPO composition failed",
-      __func__, __LINE__ );
+               __func__, __LINE__);
     return rc;
   }
   CDBG("%s %d:] app2_start_off_addr %p = %x", __func__, __LINE__,
-    app2_start_off_addr, *app2_start_off_addr);
+       app2_start_off_addr, *app2_start_off_addr);
 
   //Get the addr of the MP Headr start offset.
   //All offsets in the MP header are wrt to this addr
   mp_headr_start_off_addr = mm_jpeg_mpo_get_mp_header(app2_start_off_addr);
-  if (!mp_headr_start_off_addr) {
+  if (!mp_headr_start_off_addr)
+  {
     CDBG_ERROR("%s %d:] mp headr start offset is NULL. MPO composition failed",
-      __func__, __LINE__ );
+               __func__, __LINE__);
     return rc;
   }
   CDBG("%s %d:] mp_headr_start_off_addr %x", __func__, __LINE__,
-    *mp_headr_start_off_addr);
+       *mp_headr_start_off_addr);
 
   current_offset = mp_headr_start_off_addr - mpo_info->output_buff.buf_vaddr;
 
@@ -276,20 +287,23 @@ int mm_jpeg_mpo_update_header(mm_jpeg_mpo_info_t *mpo_info)
   current_offset += MP_ENDIAN_BYTES;
 
   //Read the value to get MP Index IFD.
-  if (endianess == MPO_LITTLE_ENDIAN) {
+  if (endianess == MPO_LITTLE_ENDIAN)
+  {
     offset_to_nxt_ifd = READ_LONG_LITTLE(mpo_info->output_buff.buf_vaddr,
-      current_offset);
-  } else {
+                                         current_offset);
+  }
+  else
+  {
     offset_to_nxt_ifd = READ_LONG(mpo_info->output_buff.buf_vaddr,
-      current_offset);
+                                  current_offset);
   }
   CDBG("%s %d:] offset_to_nxt_ifd %d", __func__, __LINE__, offset_to_nxt_ifd);
 
   current_offset = ((mp_headr_start_off_addr + offset_to_nxt_ifd) -
-    mpo_info->output_buff.buf_vaddr);
+                    mpo_info->output_buff.buf_vaddr);
   mp_index_ifd_offset = current_offset;
   CDBG("%s %d:] mp_index_ifd_offset %d", __func__, __LINE__,
-    mp_index_ifd_offset);
+       mp_index_ifd_offset);
 
   //Traverse to MP Entry value
   ifd_tag_count = READ_SHORT(mpo_info->output_buff.buf_vaddr, current_offset);
@@ -303,55 +317,66 @@ int mm_jpeg_mpo_update_header(mm_jpeg_mpo_info_t *mpo_info)
 
   mp_entry_val_offset = current_offset;
   CDBG("%s %d:] MP Entry value offset %d", __func__, __LINE__,
-    mp_entry_val_offset);
+       mp_entry_val_offset);
 
   //Update image size for primary image
   current_offset += MP_INDEX_ENTRY_INDIVIDUAL_IMAGE_ATTRIBUTE_BYTES;
-  if (endianess == MPO_LITTLE_ENDIAN) {
+  if (endianess == MPO_LITTLE_ENDIAN)
+  {
     mm_jpeg_mpo_write_long_little_endian(mpo_info->output_buff.buf_vaddr,
-      current_offset, mpo_info->output_buff_size,
-      mpo_info->primary_image.buf_filled_len, &overflow_flag);
-  } else {
+                                         current_offset, mpo_info->output_buff_size,
+                                         mpo_info->primary_image.buf_filled_len, &overflow_flag);
+  }
+  else
+  {
     mm_jpeg_mpo_write_long(mpo_info->output_buff.buf_vaddr,
-      current_offset, mpo_info->output_buff_size,
-      mpo_info->primary_image.buf_filled_len, &overflow_flag);
+                           current_offset, mpo_info->output_buff_size,
+                           mpo_info->primary_image.buf_filled_len, &overflow_flag);
   }
 
   aux_start_addr = mpo_info->output_buff.buf_vaddr +
-    mpo_info->primary_image.buf_filled_len;
+                   mpo_info->primary_image.buf_filled_len;
 
-  for (i = 0; i < mpo_info->num_of_images - 1; i++) {
+  for (i = 0; i < mpo_info->num_of_images - 1; i++)
+  {
     //Go to MP Entry val for each image
     mp_entry_val_offset += MP_INDEX_ENTRY_VALUE_BYTES;
     current_offset = mp_entry_val_offset;
 
     //Update image size
     current_offset += MP_INDEX_ENTRY_INDIVIDUAL_IMAGE_ATTRIBUTE_BYTES;
-    if (endianess == MPO_LITTLE_ENDIAN) {
+    if (endianess == MPO_LITTLE_ENDIAN)
+    {
       mm_jpeg_mpo_write_long_little_endian(mpo_info->output_buff.buf_vaddr,
-        current_offset, mpo_info->output_buff_size,
-        mpo_info->aux_images[i].buf_filled_len, &overflow_flag);
-    } else {
+                                           current_offset, mpo_info->output_buff_size,
+                                           mpo_info->aux_images[i].buf_filled_len, &overflow_flag);
+    }
+    else
+    {
       mm_jpeg_mpo_write_long(mpo_info->output_buff.buf_vaddr,
-        current_offset, mpo_info->output_buff_size,
-        mpo_info->aux_images[i].buf_filled_len, &overflow_flag);
+                             current_offset, mpo_info->output_buff_size,
+                             mpo_info->aux_images[i].buf_filled_len, &overflow_flag);
     }
     CDBG("%s %d:] aux[%d] start_addr %x", __func__, __LINE__, i,
-       *aux_start_addr);
+         *aux_start_addr);
     //Update the offset
     current_offset += MP_INDEX_ENTRY_INDIVIDUAL_IMAGE_SIZE_BYTES;
-    if (endianess == MPO_LITTLE_ENDIAN) {
+    if (endianess == MPO_LITTLE_ENDIAN)
+    {
       mm_jpeg_mpo_write_long_little_endian(mpo_info->output_buff.buf_vaddr,
-        current_offset, mpo_info->output_buff_size,
-        aux_start_addr - mp_headr_start_off_addr, &overflow_flag);
-    } else {
+                                           current_offset, mpo_info->output_buff_size,
+                                           aux_start_addr - mp_headr_start_off_addr, &overflow_flag);
+    }
+    else
+    {
       mm_jpeg_mpo_write_long(mpo_info->output_buff.buf_vaddr,
-        current_offset, mpo_info->output_buff_size,
-        aux_start_addr - mp_headr_start_off_addr, &overflow_flag);
+                             current_offset, mpo_info->output_buff_size,
+                             aux_start_addr - mp_headr_start_off_addr, &overflow_flag);
     }
     aux_start_addr += mpo_info->aux_images[i].buf_filled_len;
   }
-  if (!overflow_flag) {
+  if (!overflow_flag)
+  {
     rc = 0;
   }
   return rc;
@@ -378,32 +403,40 @@ int mm_jpeg_mpo_compose(mm_jpeg_mpo_info_t *mpo_info)
   pthread_mutex_lock(&g_mpo_lock);
 
   //Primary image needs to be copied to the o/p buffer if its not already
-  if (mpo_info->output_buff.buf_filled_len == 0) {
-    if (mpo_info->primary_image.buf_filled_len < mpo_info->output_buff_size) {
+  if (mpo_info->output_buff.buf_filled_len == 0)
+  {
+    if (mpo_info->primary_image.buf_filled_len < mpo_info->output_buff_size)
+    {
       memcpy(mpo_info->output_buff.buf_vaddr, mpo_info->primary_image.buf_vaddr,
-        mpo_info->primary_image.buf_filled_len);
+             mpo_info->primary_image.buf_filled_len);
       mpo_info->output_buff.buf_filled_len +=
-        mpo_info->primary_image.buf_filled_len;
-    } else {
+          mpo_info->primary_image.buf_filled_len;
+    }
+    else
+    {
       CDBG_ERROR("%s %d: O/P buffer not large enough. MPO composition failed",
-        __func__, __LINE__);
+                 __func__, __LINE__);
       pthread_mutex_unlock(&g_mpo_lock);
       return rc;
     }
   }
   //Append each Aux image to the buffer
-  for (i = 0; i < mpo_info->num_of_images - 1; i++) {
+  for (i = 0; i < mpo_info->num_of_images - 1; i++)
+  {
     if ((mpo_info->output_buff.buf_filled_len +
-      mpo_info->aux_images[i].buf_filled_len) <= mpo_info->output_buff_size) {
+         mpo_info->aux_images[i].buf_filled_len) <= mpo_info->output_buff_size)
+    {
       aux_write_offset = mpo_info->output_buff.buf_vaddr +
-        mpo_info->output_buff.buf_filled_len;
+                         mpo_info->output_buff.buf_filled_len;
       memcpy(aux_write_offset, mpo_info->aux_images[i].buf_vaddr,
-        mpo_info->aux_images[i].buf_filled_len);
+             mpo_info->aux_images[i].buf_filled_len);
       mpo_info->output_buff.buf_filled_len +=
-        mpo_info->aux_images[i].buf_filled_len;
-    } else {
+          mpo_info->aux_images[i].buf_filled_len;
+    }
+    else
+    {
       CDBG_ERROR("%s %d: O/P buffer not large enough. MPO composition failed",
-          __func__, __LINE__);
+                 __func__, __LINE__);
       pthread_mutex_unlock(&g_mpo_lock);
       return rc;
     }

@@ -36,29 +36,31 @@
 
 using namespace android;
 
-namespace qcamera {
+namespace qcamera
+{
 
-class QCamera3CropRegionMapper {
+class QCamera3CropRegionMapper
+{
 public:
-    QCamera3CropRegionMapper();
-    virtual ~QCamera3CropRegionMapper();
+  QCamera3CropRegionMapper();
+  virtual ~QCamera3CropRegionMapper();
 
-    void update(uint32_t active_array_w, uint32_t active_array_h,
-            uint32_t sensor_w, uint32_t sensor_h);
-    void toActiveArray(int32_t& crop_left, int32_t& crop_top,
-            int32_t& crop_width, int32_t& crop_height);
-    void toSensor(int32_t& crop_left, int32_t& crop_top,
-            int32_t& crop_width, int32_t& crop_height);
-    void toActiveArray(uint32_t& x, uint32_t& y);
-    void toSensor(uint32_t& x, uint32_t& y);
+  void update(uint32_t active_array_w, uint32_t active_array_h,
+              uint32_t sensor_w, uint32_t sensor_h);
+  void toActiveArray(int32_t &crop_left, int32_t &crop_top,
+                     int32_t &crop_width, int32_t &crop_height);
+  void toSensor(int32_t &crop_left, int32_t &crop_top,
+                int32_t &crop_width, int32_t &crop_height);
+  void toActiveArray(uint32_t &x, uint32_t &y);
+  void toSensor(uint32_t &x, uint32_t &y);
 
 private:
-    /* sensor output size */
-    int32_t mSensorW, mSensorH;
-    int32_t mActiveArrayW, mActiveArrayH;
+  /* sensor output size */
+  int32_t mSensorW, mSensorH;
+  int32_t mActiveArrayW, mActiveArrayH;
 
-    void boundToSize(int32_t& left, int32_t& top, int32_t& width,
-            int32_t& height, int32_t bound_w, int32_t bound_h);
+  void boundToSize(int32_t &left, int32_t &top, int32_t &width,
+                   int32_t &height, int32_t bound_w, int32_t bound_h);
 };
 
 }; // namespace qcamera

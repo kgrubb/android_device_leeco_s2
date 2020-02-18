@@ -39,9 +39,10 @@
 
 #define member_of(ptr, type, member) ({ \
   const typeof(((type *)0)->member) *__mptr = (ptr); \
-  (type *)((char *)__mptr - offsetof(type,member));})
+  (type *)((char *)__mptr - offsetof(type,member)); })
 
-struct cam_list {
+struct cam_list
+{
   struct cam_list *next, *prev;
 };
 
@@ -52,7 +53,7 @@ static inline void cam_list_init(struct cam_list *ptr)
 }
 
 static inline void cam_list_add_tail_node(struct cam_list *item,
-  struct cam_list *head)
+                                          struct cam_list *head)
 {
   struct cam_list *prev = head->prev;
 
@@ -63,7 +64,7 @@ static inline void cam_list_add_tail_node(struct cam_list *item,
 }
 
 static inline void cam_list_insert_before_node(struct cam_list *item,
-  struct cam_list *node)
+                                               struct cam_list *node)
 {
   item->next = node;
   item->prev = node->prev;

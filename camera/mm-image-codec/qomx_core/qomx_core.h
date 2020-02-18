@@ -52,7 +52,8 @@ typedef void *(*create_comp_func_t)(OMX_PTR aobj);
 *    @comp_name: name of the component
      @lib_name: Name of the .so library
 **/
-typedef struct comp_info_t {
+typedef struct comp_info_t
+{
   char *comp_name;
   char *lib_name;
 } comp_info_t;
@@ -69,11 +70,12 @@ typedef struct comp_info_t {
 *     OMX handle to its respective function implementation in
 *     the component
 **/
-typedef struct _omx_core_component_t {
-  OMX_HANDLETYPE *handle[OMX_COMP_MAX_INSTANCES];  //Instance handle
-  char *roles[OMX_CORE_MAX_ROLES];  //Roles played by the component
-  char *name;  //Component Name
-  uint8_t open;  //Is component active
+typedef struct _omx_core_component_t
+{
+  OMX_HANDLETYPE *handle[OMX_COMP_MAX_INSTANCES]; //Instance handle
+  char *roles[OMX_CORE_MAX_ROLES];                //Roles played by the component
+  char *name;                                     //Component Name
+  uint8_t open;                                   //Is component active
   void *lib_handle;
   get_instance_t get_instance;
   create_comp_func_t create_comp_func;
@@ -88,8 +90,9 @@ typedef struct _omx_core_component_t {
 *    initialized
 *    @core_lock: Lock to syncronize the omx core operations
 **/
-typedef struct _omx_core_t {
-  omx_core_component_t component[OMX_COMP_MAX_NUM];  //Array of pointers to components
+typedef struct _omx_core_t
+{
+  omx_core_component_t component[OMX_COMP_MAX_NUM]; //Array of pointers to components
   int comp_cnt;
   pthread_mutex_t core_lock;
 } omx_core_t;

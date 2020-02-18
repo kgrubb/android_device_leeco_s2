@@ -43,240 +43,267 @@ extern int exTfa98xx_speakeroff();
 #define AMP_MIXER_CTL "Smart PA I2S"
 #define CDLA_MIXER_CTL "Headphone Playback Volume"
 
-typedef enum {
-    SMART_PA_FOR_AUDIO = 0,
-    SMART_PA_FOR_MUSIC = 0,
-    SMART_PA_FOR_VOIP = 1,
-    SMART_PA_FIND = 1,          /* ??? */
-    SMART_PA_FOR_VOICE = 2,
-    SMART_PA_MMI = 3,           /* ??? */
+typedef enum
+{
+  SMART_PA_FOR_AUDIO = 0,
+  SMART_PA_FOR_MUSIC = 0,
+  SMART_PA_FOR_VOIP = 1,
+  SMART_PA_FIND = 1, /* ??? */
+  SMART_PA_FOR_VOICE = 2,
+  SMART_PA_MMI = 3, /* ??? */
 } smart_pa_mode_t;
 
-typedef struct tfa9890_device {
-    amplifier_device_t amp_dev;
-    audio_mode_t mode;
+typedef struct tfa9890_device
+{
+  amplifier_device_t amp_dev;
+  audio_mode_t mode;
 } tfa9890_device_t;
 
 static tfa9890_device_t *tfa9890_dev = NULL;
 
-static int is_speaker(uint32_t snd_device) 
+static int is_speaker(uint32_t snd_device)
 {
-    int speaker = 0;
+  int speaker = 0;
 
-    switch (snd_device) {
-        case SND_DEVICE_OUT_SPEAKER:
-        case SND_DEVICE_OUT_SPEAKER_REVERSE:
-        case SND_DEVICE_OUT_SPEAKER_AND_HEADPHONES:
-        case SND_DEVICE_OUT_VOICE_SPEAKER:
-        case SND_DEVICE_OUT_SPEAKER_AND_HDMI:
-        case SND_DEVICE_OUT_SPEAKER_AND_USB_HEADSET:
-        case SND_DEVICE_OUT_SPEAKER_AND_ANC_HEADSET:
-            speaker = 1;
-            break;
-    }
+  switch (snd_device)
+  {
+  case SND_DEVICE_OUT_SPEAKER:
+  case SND_DEVICE_OUT_SPEAKER_REVERSE:
+  case SND_DEVICE_OUT_SPEAKER_AND_HEADPHONES:
+  case SND_DEVICE_OUT_VOICE_SPEAKER:
+  case SND_DEVICE_OUT_SPEAKER_AND_HDMI:
+  case SND_DEVICE_OUT_SPEAKER_AND_USB_HEADSET:
+  case SND_DEVICE_OUT_SPEAKER_AND_ANC_HEADSET:
+    speaker = 1;
+    break;
+  }
 
-    return speaker;
+  return speaker;
 }
 
-static int is_voice_speaker(uint32_t snd_device) 
+static int is_voice_speaker(uint32_t snd_device)
 {
-    return snd_device == SND_DEVICE_OUT_VOICE_SPEAKER;
+  return snd_device == SND_DEVICE_OUT_VOICE_SPEAKER;
 }
 
 static int set_clocks_enabled(bool enable)
 {
-    enum mixer_ctl_type type;
-    struct mixer_ctl *ctl;
-    struct mixer *mixer = mixer_open(0);
+  enum mixer_ctl_type type;
+  struct mixer_ctl *ctl;
+  struct mixer *mixer = mixer_open(0);
 
-    if (mixer == NULL) {
-        ALOGE("%s: Error opening mixer 0'", __func__);
-        return -1;
-    }
+  if (mixer == NULL)
+  {
+    ALOGE("%s: Error opening mixer 0'", __func__);
+    return -1;
+  }
 
-    ctl = mixer_get_ctl_by_name(mixer, AMP_MIXER_CTL);
-    if (ctl == NULL) {
-        mixer_close(mixer);
-        ALOGE("%s: Could not find %s\n", __func__, AMP_MIXER_CTL);
-        return -ENODEV;
-    }
-
-    type = mixer_ctl_get_type(ctl);
-    if (type != MIXER_CTL_TYPE_ENUM) {
-        ALOGE("%s: %s is not supported\n", __func__, AMP_MIXER_CTL);
-        mixer_close(mixer);
-        return -ENOTTY;
-    }
-
-    mixer_ctl_set_value(ctl, 0, enable);
+  ctl = mixer_get_ctl_by_name(mixer, AMP_MIXER_CTL);
+  if (ctl == NULL)
+  {
     mixer_close(mixer);
-    return 0;
+    ALOGE("%s: Could not find %s\n", __func__, AMP_MIXER_CTL);
+    return -ENODEV;
+  }
+
+  type = mixer_ctl_get_type(ctl);
+  if (type != MIXER_CTL_TYPE_ENUM)
+  {
+    ALOGE("%s: %s is not supported\n", __func__, AMP_MIXER_CTL);
+    mixer_close(mixer);
+    return -ENOTTY;
+  }
+
+  mixer_ctl_set_value(ctl, 0, enable);
+  mixer_close(mixer);
+  return 0;
 }
 
 static int set_cdla_volume(audio_mode_t mode)
 {
-    int snd_card_num = 0;
-    const char *snd_card_name;
-    enum mixer_ctl_type type;
-    struct mixer_ctl *ctl;
-    struct mixer *mixer;
+  int snd_card_num = 0;
+  const char *snd_card_name;
+  enum mixer_ctl_type type;
+  struct mixer_ctl *ctl;
+  struct mixer *mixer;
 
-    while (snd_card_num < MAX_SND_CARD) {
-        mixer = mixer_open(snd_card_num);
+  while (snd_card_num < MAX_SND_CARD)
+  {
+    mixer = mixer_open(snd_card_num);
 
-        if (!mixer) {
-            snd_card_num++;
-            continue;
-        }
-
-        snd_card_name = mixer_get_name(mixer);
-
-        if (strcmp(snd_card_name, CDLA_SND_CARD_NAME) == 0) {
-            ALOGV("%s: Found sound card: %s", __func__, snd_card_name);
-            ctl = mixer_get_ctl_by_name(mixer, CDLA_MIXER_CTL);
-            if (ctl == NULL) {
-                mixer_close(mixer);
-                ALOGE("%s: Could not find %s\n", __func__, CDLA_MIXER_CTL);
-                return -ENODEV;
-            }
-
-            type = mixer_ctl_get_type(ctl);
-            if (type != MIXER_CTL_TYPE_INT) {
-                ALOGE("%s: %s is not supported\n", __func__, CDLA_MIXER_CTL);
-                mixer_close(mixer);
-                return -ENOTTY;
-            }
-
-            switch(mode) {
-                case AUDIO_MODE_IN_CALL:
-                case AUDIO_MODE_IN_COMMUNICATION:
-                    ALOGV("%s: Setting volume for CALL/COMMUNICATION", __func__);
-                    mixer_ctl_set_value(ctl, 0, 4);
-                    mixer_ctl_set_value(ctl, 1, 4);
-                    break;
-                default:
-                    ALOGV("%s: Setting default volume", __func__);
-                    mixer_ctl_set_value(ctl, 0, 7);
-                    mixer_ctl_set_value(ctl, 1, 7);
-            }
-        }
-        mixer_close(mixer);
-        snd_card_num++;
+    if (!mixer)
+    {
+      snd_card_num++;
+      continue;
     }
-    return 0;
+
+    snd_card_name = mixer_get_name(mixer);
+
+    if (strcmp(snd_card_name, CDLA_SND_CARD_NAME) == 0)
+    {
+      ALOGV("%s: Found sound card: %s", __func__, snd_card_name);
+      ctl = mixer_get_ctl_by_name(mixer, CDLA_MIXER_CTL);
+      if (ctl == NULL)
+      {
+        mixer_close(mixer);
+        ALOGE("%s: Could not find %s\n", __func__, CDLA_MIXER_CTL);
+        return -ENODEV;
+      }
+
+      type = mixer_ctl_get_type(ctl);
+      if (type != MIXER_CTL_TYPE_INT)
+      {
+        ALOGE("%s: %s is not supported\n", __func__, CDLA_MIXER_CTL);
+        mixer_close(mixer);
+        return -ENOTTY;
+      }
+
+      switch (mode)
+      {
+      case AUDIO_MODE_IN_CALL:
+      case AUDIO_MODE_IN_COMMUNICATION:
+        ALOGV("%s: Setting volume for CALL/COMMUNICATION", __func__);
+        mixer_ctl_set_value(ctl, 0, 4);
+        mixer_ctl_set_value(ctl, 1, 4);
+        break;
+      default:
+        ALOGV("%s: Setting default volume", __func__);
+        mixer_ctl_set_value(ctl, 0, 7);
+        mixer_ctl_set_value(ctl, 1, 7);
+      }
+    }
+    mixer_close(mixer);
+    snd_card_num++;
+  }
+  return 0;
 }
 
 static int amp_set_mode(struct amplifier_device *device, audio_mode_t mode)
 {
-    int ret = 0;
-    tfa9890_device_t *tfa9890 = (tfa9890_device_t*) device;
+  int ret = 0;
+  tfa9890_device_t *tfa9890 = (tfa9890_device_t *)device;
 
-    tfa9890->mode = mode;
-    return ret;
+  tfa9890->mode = mode;
+  return ret;
 }
 
 static int amp_enable_output_devices(hw_device_t *device, uint32_t devices, bool enable)
 {
-    tfa9890_device_t *tfa9890 = (tfa9890_device_t*) device;
-    int ret = 0;
+  tfa9890_device_t *tfa9890 = (tfa9890_device_t *)device;
+  int ret = 0;
 
-    if (is_speaker(devices)) {
+  if (is_speaker(devices))
+  {
 
-        if (enable) {
-            smart_pa_mode_t mode;
+    if (enable)
+    {
+      smart_pa_mode_t mode;
 
-            switch(tfa9890->mode) {
-                case AUDIO_MODE_IN_CALL:
-                    mode = SMART_PA_FOR_VOICE;
-                    break;
-                case AUDIO_MODE_IN_COMMUNICATION:
-                    mode = SMART_PA_FOR_VOIP;
-                    break;
-                default:
-                    mode = SMART_PA_FOR_AUDIO;
-            }
+      switch (tfa9890->mode)
+      {
+      case AUDIO_MODE_IN_CALL:
+        mode = SMART_PA_FOR_VOICE;
+        break;
+      case AUDIO_MODE_IN_COMMUNICATION:
+        mode = SMART_PA_FOR_VOIP;
+        break;
+      default:
+        mode = SMART_PA_FOR_AUDIO;
+      }
 
-            set_clocks_enabled(true);
+      set_clocks_enabled(true);
 
-            if ((ret = exTfa98xx_speakeron(mode)) != 0) {
-                ALOGE("%s: exTfa98xx_speakeron(%d) failed: %d\n", __func__, mode, ret);
-            } else {
-                ALOGD("%s: Amplifier on\n", __func__);
-            }
-
-        } else {
-
-            if ((ret = exTfa98xx_speakeroff()) != 0) {
-                ALOGE("%s: exTfa98xx_speakeroff failed: %d\n", __func__, ret);
-            } else {
-                ALOGD("%s: Amplifier off\n", __func__);
-            }
-
-            set_clocks_enabled(false);
-        }
-
+      if ((ret = exTfa98xx_speakeron(mode)) != 0)
+      {
+        ALOGE("%s: exTfa98xx_speakeron(%d) failed: %d\n", __func__, mode, ret);
+      }
+      else
+      {
+        ALOGD("%s: Amplifier on\n", __func__);
+      }
     }
+    else
+    {
 
-    set_cdla_volume(tfa9890->mode);
+      if ((ret = exTfa98xx_speakeroff()) != 0)
+      {
+        ALOGE("%s: exTfa98xx_speakeroff failed: %d\n", __func__, ret);
+      }
+      else
+      {
+        ALOGD("%s: Amplifier off\n", __func__);
+      }
 
-    return 0;
+      set_clocks_enabled(false);
+    }
+  }
+
+  set_cdla_volume(tfa9890->mode);
+
+  return 0;
 }
 
 static int amp_dev_close(hw_device_t *device)
 {
-    tfa9890_device_t *tfa9890 = (tfa9890_device_t*) device;
-    free(tfa9890);
+  tfa9890_device_t *tfa9890 = (tfa9890_device_t *)device;
+  free(tfa9890);
 
-    return 0;
+  return 0;
 }
 
 static int amp_init(tfa9890_device_t *tfa9890)
 {
-    int ret = 0;
+  int ret = 0;
 
-    set_clocks_enabled(true);
-    if ((ret = exTfa98xx_calibration()) != 0) {
-        ALOGE("%s: exTfa98xx_calibration failed: %d\n", __func__, ret);
-    } else {
-        ALOGD("%s: Amplifier calibrated\n", __func__);
-    }
-    set_clocks_enabled(false);
+  set_clocks_enabled(true);
+  if ((ret = exTfa98xx_calibration()) != 0)
+  {
+    ALOGE("%s: exTfa98xx_calibration failed: %d\n", __func__, ret);
+  }
+  else
+  {
+    ALOGD("%s: Amplifier calibrated\n", __func__);
+  }
+  set_clocks_enabled(false);
 
-    return 0;
+  return 0;
 }
 
 static int amp_module_open(const hw_module_t *module,
-        __attribute__((unused)) const char *name, hw_device_t **device)
+                           __attribute__((unused)) const char *name, hw_device_t **device)
 {
-    if (tfa9890_dev) {
-        ALOGE("%s:%d: Unable to open second instance of TFA9890 amplifier\n",
-                __func__, __LINE__);
-        return -EBUSY;
-    }
+  if (tfa9890_dev)
+  {
+    ALOGE("%s:%d: Unable to open second instance of TFA9890 amplifier\n",
+          __func__, __LINE__);
+    return -EBUSY;
+  }
 
-    tfa9890_dev = calloc(1, sizeof(tfa9890_device_t));
-    if (!tfa9890_dev) {
-        ALOGE("%s:%d: Unable to allocate memory for amplifier device\n",
-                __func__, __LINE__);
-        return -ENOMEM;
-    }
+  tfa9890_dev = calloc(1, sizeof(tfa9890_device_t));
+  if (!tfa9890_dev)
+  {
+    ALOGE("%s:%d: Unable to allocate memory for amplifier device\n",
+          __func__, __LINE__);
+    return -ENOMEM;
+  }
 
-    tfa9890_dev->amp_dev.common.tag = HARDWARE_DEVICE_TAG;
-    tfa9890_dev->amp_dev.common.module = (hw_module_t *) module;
-    tfa9890_dev->amp_dev.common.version = HARDWARE_DEVICE_API_VERSION(1, 0);
-    tfa9890_dev->amp_dev.common.close = amp_dev_close;
+  tfa9890_dev->amp_dev.common.tag = HARDWARE_DEVICE_TAG;
+  tfa9890_dev->amp_dev.common.module = (hw_module_t *)module;
+  tfa9890_dev->amp_dev.common.version = HARDWARE_DEVICE_API_VERSION(1, 0);
+  tfa9890_dev->amp_dev.common.close = amp_dev_close;
 
-    tfa9890_dev->amp_dev.enable_output_devices = amp_enable_output_devices;
-    tfa9890_dev->amp_dev.set_mode = amp_set_mode;
+  tfa9890_dev->amp_dev.enable_output_devices = amp_enable_output_devices;
+  tfa9890_dev->amp_dev.set_mode = amp_set_mode;
 
-    if (amp_init(tfa9890_dev)) {
-        free(tfa9890_dev);
-        return -ENODEV;
-    }
+  if (amp_init(tfa9890_dev))
+  {
+    free(tfa9890_dev);
+    return -ENODEV;
+  }
 
-    *device = (hw_device_t *) tfa9890_dev;
+  *device = (hw_device_t *)tfa9890_dev;
 
-    return 0;
+  return 0;
 }
 
 static struct hw_module_methods_t hal_module_methods = {

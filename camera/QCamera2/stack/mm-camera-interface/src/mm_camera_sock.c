@@ -47,43 +47,45 @@
  *==========================================================================*/
 int mm_camera_socket_create(int cam_id, mm_camera_sock_type_t sock_type)
 {
-    int socket_fd;
-    mm_camera_sock_addr_t sock_addr;
-    int sktype;
-    int rc;
+  int socket_fd;
+  mm_camera_sock_addr_t sock_addr;
+  int sktype;
+  int rc;
 
-    switch (sock_type)
-    {
-      case MM_CAMERA_SOCK_TYPE_UDP:
-        sktype = SOCK_DGRAM;
-        break;
-      case MM_CAMERA_SOCK_TYPE_TCP:
-        sktype = SOCK_STREAM;
-        break;
-      default:
-        CDBG_ERROR("%s: unknown socket type =%d", __func__, sock_type);
-        return -1;
-    }
-    socket_fd = socket(AF_UNIX, sktype, 0);
-    if (socket_fd < 0) {
-        CDBG_ERROR("%s: error create socket fd =%d", __func__, socket_fd);
-        return socket_fd;
-    }
-
-    memset(&sock_addr, 0, sizeof(sock_addr));
-    sock_addr.addr_un.sun_family = AF_UNIX;
-    snprintf(sock_addr.addr_un.sun_path,
-             UNIX_PATH_MAX, QCAMERA_DUMP_FRM_LOCATION"cam_socket%d", cam_id);
-    rc = connect(socket_fd, &sock_addr.addr, sizeof(sock_addr.addr_un));
-    if (0 != rc) {
-      close(socket_fd);
-      socket_fd = -1;
-      CDBG_ERROR("%s: socket_fd=%d %s ", __func__, socket_fd, strerror(errno));
-    }
-
-    CDBG("%s: socket_fd=%d %s", __func__, socket_fd,
-        sock_addr.addr_un.sun_path);
+  switch (sock_type)
+  {
+  case MM_CAMERA_SOCK_TYPE_UDP:
+    sktype = SOCK_DGRAM;
+    break;
+  case MM_CAMERA_SOCK_TYPE_TCP:
+    sktype = SOCK_STREAM;
+    break;
+  default:
+    CDBG_ERROR("%s: unknown socket type =%d", __func__, sock_type);
+    return -1;
+  }
+  socket_fd = socket(AF_UNIX, sktype, 0);
+  if (socket_fd < 0)
+  {
+    CDBG_ERROR("%s: error create socket fd =%d", __func__, socket_fd);
     return socket_fd;
+  }
+
+  memset(&sock_addr, 0, sizeof(sock_addr));
+  sock_addr.addr_un.sun_family = AF_UNIX;
+  snprintf(sock_addr.addr_un.sun_path,
+           UNIX_PATH_MAX, QCAMERA_DUMP_FRM_LOCATION "cam_socket%d", cam_id);
+  rc = connect(socket_fd, &sock_addr.addr, sizeof(sock_addr.addr_un));
+  if (0 != rc)
+  {
+    close(socket_fd);
+    socket_fd = -1;
+    CDBG_ERROR("%s: socket_fd=%d %s ", __func__, socket_fd, strerror(errno));
+  }
+
+  CDBG("%s: socket_fd=%d %s", __func__, socket_fd,
+       sock_addr.addr_un.sun_path);
+  return socket_fd;
 }
 
 /*===========================================================================
@@ -96,9 +98,10 @@ int mm_camera_socket_create(int cam_id, mm_camera_sock_type_t sock_type)
  *==========================================================================*/
 void mm_camera_socket_close(int fd)
 {
-    if (fd >= 0) {
-      close(fd);
-    }
+  if (fd >= 0)
+  {
+    close(fd);
+  }
 }
 
 /*===========================================================================
@@ -112,53 +115,58 @@ void mm_camera_socket_close(int fd)
  * RETURN     : the total bytes of sent msg
  *==========================================================================*/
 int mm_camera_socket_sendmsg(
-  int fd,
-  void *msg,
-  size_t buf_size,
-  int sendfd)
+    int fd,
+    void *msg,
+    size_t buf_size,
+    int sendfd)
 {
-    struct msghdr msgh;
-    struct iovec iov[1];
-    struct cmsghdr * cmsghp = NULL;
-    char control[CMSG_SPACE(sizeof(int))];
+  struct msghdr msgh;
+  struct iovec iov[1];
+  struct cmsghdr *cmsghp = NULL;
+  char control[CMSG_SPACE(sizeof(int))];
 
-    if (msg == NULL) {
-      CDBG("%s: msg is NULL", __func__);
+  if (msg == NULL)
+  {
+    CDBG("%s: msg is NULL", __func__);
+    return -1;
+  }
+  memset(&msgh, 0, sizeof(msgh));
+  msgh.msg_name = NULL;
+  msgh.msg_namelen = 0;
+
+  iov[0].iov_base = msg;
+  iov[0].iov_len = buf_size;
+  msgh.msg_iov = iov;
+  msgh.msg_iovlen = 1;
+  CDBG("%s: iov_len=%llu", __func__,
+       (unsigned long long int)iov[0].iov_len);
+
+  msgh.msg_control = NULL;
+  msgh.msg_controllen = 0;
+
+  /* if sendfd is valid, we need to pass it through control msg */
+  if (sendfd >= 0)
+  {
+    msgh.msg_control = control;
+    msgh.msg_controllen = sizeof(control);
+    cmsghp = CMSG_FIRSTHDR(&msgh);
+    if (cmsghp != NULL)
+    {
+      CDBG("%s: Got ctrl msg pointer", __func__);
+      cmsghp->cmsg_level = SOL_SOCKET;
+      cmsghp->cmsg_type = SCM_RIGHTS;
+      cmsghp->cmsg_len = CMSG_LEN(sizeof(int));
+      *((int *)CMSG_DATA(cmsghp)) = sendfd;
+      CDBG("%s: cmsg data=%d", __func__, *((int *)CMSG_DATA(cmsghp)));
+    }
+    else
+    {
+      CDBG("%s: ctrl msg NULL", __func__);
       return -1;
     }
-    memset(&msgh, 0, sizeof(msgh));
-    msgh.msg_name = NULL;
-    msgh.msg_namelen = 0;
+  }
 
-    iov[0].iov_base = msg;
-    iov[0].iov_len = buf_size;
-    msgh.msg_iov = iov;
-    msgh.msg_iovlen = 1;
-    CDBG("%s: iov_len=%llu", __func__,
-            (unsigned long long int)iov[0].iov_len);
-
-    msgh.msg_control = NULL;
-    msgh.msg_controllen = 0;
-
-    /* if sendfd is valid, we need to pass it through control msg */
-    if( sendfd >= 0) {
-      msgh.msg_control = control;
-      msgh.msg_controllen = sizeof(control);
-      cmsghp = CMSG_FIRSTHDR(&msgh);
-      if (cmsghp != NULL) {
-        CDBG("%s: Got ctrl msg pointer", __func__);
-        cmsghp->cmsg_level = SOL_SOCKET;
-        cmsghp->cmsg_type = SCM_RIGHTS;
-        cmsghp->cmsg_len = CMSG_LEN(sizeof(int));
-        *((int *)CMSG_DATA(cmsghp)) = sendfd;
-        CDBG("%s: cmsg data=%d", __func__, *((int *) CMSG_DATA(cmsghp)));
-      } else {
-        CDBG("%s: ctrl msg NULL", __func__);
-        return -1;
-      }
-    }
-
-    return sendmsg(fd, &(msgh), 0);
+  return sendmsg(fd, &(msgh), 0);
 }
 
 /*===========================================================================
@@ -173,55 +181,60 @@ int mm_camera_socket_sendmsg(
  * RETURN     : the total bytes of sent msg
  *==========================================================================*/
 int mm_camera_socket_bundle_sendmsg(
-  int fd,
-  void *msg,
-  size_t buf_size,
-  int sendfds[CAM_MAX_NUM_BUFS_PER_STREAM],
-  int numfds)
+    int fd,
+    void *msg,
+    size_t buf_size,
+    int sendfds[CAM_MAX_NUM_BUFS_PER_STREAM],
+    int numfds)
 {
-    struct msghdr msgh;
-    struct iovec iov[1];
-    struct cmsghdr * cmsghp = NULL;
-    char control[CMSG_SPACE(sizeof(int) * numfds)];
-    int *fds_ptr = NULL;
+  struct msghdr msgh;
+  struct iovec iov[1];
+  struct cmsghdr *cmsghp = NULL;
+  char control[CMSG_SPACE(sizeof(int) * numfds)];
+  int *fds_ptr = NULL;
 
-    if (msg == NULL) {
-      CDBG("%s: msg is NULL", __func__);
+  if (msg == NULL)
+  {
+    CDBG("%s: msg is NULL", __func__);
+    return -1;
+  }
+  memset(&msgh, 0, sizeof(msgh));
+  msgh.msg_name = NULL;
+  msgh.msg_namelen = 0;
+
+  iov[0].iov_base = msg;
+  iov[0].iov_len = buf_size;
+  msgh.msg_iov = iov;
+  msgh.msg_iovlen = 1;
+  CDBG("%s: iov_len=%llu", __func__,
+       (unsigned long long int)iov[0].iov_len);
+
+  msgh.msg_control = NULL;
+  msgh.msg_controllen = 0;
+
+  /* if numfds is valid, we need to pass it through control msg */
+  if (numfds > 0)
+  {
+    msgh.msg_control = control;
+    msgh.msg_controllen = sizeof(control);
+    cmsghp = CMSG_FIRSTHDR(&msgh);
+    if (cmsghp != NULL)
+    {
+      cmsghp->cmsg_level = SOL_SOCKET;
+      cmsghp->cmsg_type = SCM_RIGHTS;
+      cmsghp->cmsg_len = CMSG_LEN(sizeof(int) * numfds);
+
+      fds_ptr = (int *)CMSG_DATA(cmsghp);
+      memcpy(fds_ptr, sendfds, sizeof(int) * numfds);
+    }
+    else
+    {
+      CDBG_ERROR("%s: ctrl msg NULL", __func__);
       return -1;
     }
-    memset(&msgh, 0, sizeof(msgh));
-    msgh.msg_name = NULL;
-    msgh.msg_namelen = 0;
+  }
 
-    iov[0].iov_base = msg;
-    iov[0].iov_len = buf_size;
-    msgh.msg_iov = iov;
-    msgh.msg_iovlen = 1;
-    CDBG("%s: iov_len=%llu", __func__,
-            (unsigned long long int)iov[0].iov_len);
-
-    msgh.msg_control = NULL;
-    msgh.msg_controllen = 0;
-
-    /* if numfds is valid, we need to pass it through control msg */
-    if (numfds > 0) {
-      msgh.msg_control = control;
-      msgh.msg_controllen = sizeof(control);
-      cmsghp = CMSG_FIRSTHDR(&msgh);
-      if (cmsghp != NULL) {
-        cmsghp->cmsg_level = SOL_SOCKET;
-        cmsghp->cmsg_type = SCM_RIGHTS;
-        cmsghp->cmsg_len = CMSG_LEN(sizeof(int) * numfds);
-
-        fds_ptr = (int*) CMSG_DATA(cmsghp);
-        memcpy(fds_ptr, sendfds, sizeof(int) * numfds);
-      } else {
-        CDBG_ERROR("%s: ctrl msg NULL", __func__);
-        return -1;
-      }
-    }
-
-    return sendmsg(fd, &(msgh), 0);
+  return sendmsg(fd, &(msgh), 0);
 }
 
 /*===========================================================================
@@ -237,57 +250,64 @@ int mm_camera_socket_bundle_sendmsg(
  * RETURN     : the total bytes of received msg
  *==========================================================================*/
 int mm_camera_socket_recvmsg(
-  int fd,
-  void *msg,
-  uint32_t buf_size,
-  int *rcvdfd)
+    int fd,
+    void *msg,
+    uint32_t buf_size,
+    int *rcvdfd)
 {
-    struct msghdr msgh;
-    struct iovec iov[1];
-    struct cmsghdr *cmsghp = NULL;
-    char control[CMSG_SPACE(sizeof(int))];
-    int rcvd_fd = -1;
-    int rcvd_len = 0;
+  struct msghdr msgh;
+  struct iovec iov[1];
+  struct cmsghdr *cmsghp = NULL;
+  char control[CMSG_SPACE(sizeof(int))];
+  int rcvd_fd = -1;
+  int rcvd_len = 0;
 
-    if ( (msg == NULL) || (buf_size <= 0) ) {
-      CDBG_ERROR(" %s: msg buf is NULL", __func__);
-      return -1;
-    }
+  if ((msg == NULL) || (buf_size <= 0))
+  {
+    CDBG_ERROR(" %s: msg buf is NULL", __func__);
+    return -1;
+  }
 
-    memset(&msgh, 0, sizeof(msgh));
-    msgh.msg_name = NULL;
-    msgh.msg_namelen = 0;
-    msgh.msg_control = control;
-    msgh.msg_controllen = sizeof(control);
+  memset(&msgh, 0, sizeof(msgh));
+  msgh.msg_name = NULL;
+  msgh.msg_namelen = 0;
+  msgh.msg_control = control;
+  msgh.msg_controllen = sizeof(control);
 
-    iov[0].iov_base = msg;
-    iov[0].iov_len = buf_size;
-    msgh.msg_iov = iov;
-    msgh.msg_iovlen = 1;
+  iov[0].iov_base = msg;
+  iov[0].iov_len = buf_size;
+  msgh.msg_iov = iov;
+  msgh.msg_iovlen = 1;
 
-    if ( (rcvd_len = recvmsg(fd, &(msgh), 0)) <= 0) {
-      CDBG_ERROR(" %s: recvmsg failed", __func__);
-      return rcvd_len;
-    }
-
-    CDBG("%s:  msg_ctrl %p len %zd", __func__, msgh.msg_control,
-        msgh.msg_controllen);
-
-    if( ((cmsghp = CMSG_FIRSTHDR(&msgh)) != NULL) &&
-        (cmsghp->cmsg_len == CMSG_LEN(sizeof(int))) ) {
-      if (cmsghp->cmsg_level == SOL_SOCKET &&
-        cmsghp->cmsg_type == SCM_RIGHTS) {
-        CDBG("%s:  CtrlMsg is valid", __func__);
-        rcvd_fd = *((int *) CMSG_DATA(cmsghp));
-        CDBG("%s:  Receieved fd=%d", __func__, rcvd_fd);
-      } else {
-        CDBG_ERROR("%s:  Unexpected Control Msg. Line=%d", __func__, __LINE__);
-      }
-    }
-
-    if (rcvdfd) {
-      *rcvdfd = rcvd_fd;
-    }
-
+  if ((rcvd_len = recvmsg(fd, &(msgh), 0)) <= 0)
+  {
+    CDBG_ERROR(" %s: recvmsg failed", __func__);
     return rcvd_len;
+  }
+
+  CDBG("%s:  msg_ctrl %p len %zd", __func__, msgh.msg_control,
+       msgh.msg_controllen);
+
+  if (((cmsghp = CMSG_FIRSTHDR(&msgh)) != NULL) &&
+      (cmsghp->cmsg_len == CMSG_LEN(sizeof(int))))
+  {
+    if (cmsghp->cmsg_level == SOL_SOCKET &&
+        cmsghp->cmsg_type == SCM_RIGHTS)
+    {
+      CDBG("%s:  CtrlMsg is valid", __func__);
+      rcvd_fd = *((int *)CMSG_DATA(cmsghp));
+      CDBG("%s:  Receieved fd=%d", __func__, rcvd_fd);
+    }
+    else
+    {
+      CDBG_ERROR("%s:  Unexpected Control Msg. Line=%d", __func__, __LINE__);
+    }
+  }
+
+  if (rcvdfd)
+  {
+    *rcvdfd = rcvd_fd;
+  }
+
+  return rcvd_len;
 }

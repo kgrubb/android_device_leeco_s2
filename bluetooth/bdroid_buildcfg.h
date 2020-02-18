@@ -17,6 +17,8 @@
 #ifndef _BDROID_BUILDCFG_H
 #define _BDROID_BUILDCFG_H
 
+#pragma push_macro("PROPERTY_VALUE_MAX")
+
 #include <cutils/properties.h>
 #include <string.h>
 
@@ -24,22 +26,24 @@
 
 #define BT_CLEAN_TURN_ON_DISABLED 1
 
-#define MAX_ACL_CONNECTIONS   16
-#define MAX_L2CAP_CHANNELS    16
+#define MAX_ACL_CONNECTIONS 16
+#define MAX_L2CAP_CHANNELS 16
 
-#define BLE_VND_INCLUDED   TRUE
+#define BLE_VND_INCLUDED TRUE
 #define BTM_SCO_ENHANCED_SYNC_ENABLED FALSE
 // skips conn update at conn completion
 #define BLE_PERIPHERAL_ADV_NAME FALSE
-#define BTA_BLE_SKIP_CONN_UPD  FALSE
+#define BTA_BLE_SKIP_CONN_UPD FALSE
 #define BTA_SKIP_BLE_READ_REMOTE_FEAT FALSE
-#define BTA_BLE_SKIP_CONN_UPD  FALSE
-#define BTM_LE_SECURE_CONN  TRUE
+#define BTA_BLE_SKIP_CONN_UPD FALSE
+#define BTM_LE_SECURE_CONN TRUE
 
 /* Increasing SEPs to 12 from 6 to support SHO/MCast i.e. two streams per codec */
 #define AVDT_NUM_SEPS 12
 
 /* Enable HFP WBS feature */
 #define BTIF_HF_CLIENT_WBS_INCLUDED TRUE
-#undef PROPERTY_VALUE_MAX
+
+#pragma pop_macro("PROPERTY_VALUE_MAX")
+
 #endif

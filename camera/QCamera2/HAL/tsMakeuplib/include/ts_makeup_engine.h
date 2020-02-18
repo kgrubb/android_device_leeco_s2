@@ -20,8 +20,7 @@
 #include "ts_makeup_data.h"
 #include "ts_makeup_image.h"
 
-
-    /*
+/*
      * FUNCTION   : ts_makeup_get_supported_face_num
      *
      * DESCRIPTION: get supported face number
@@ -29,10 +28,9 @@
      * RETURN    : The supported face number
      *
      */
-    int ts_makeup_get_supported_face_num();
+int ts_makeup_get_supported_face_num();
 
-
-    /*
+/*
      * FUNCTION   : ts_makeup_skin_beauty
      *
      * DESCRIPTION: skin beauty method.
@@ -46,8 +44,8 @@
      * RETURN    : TS_OK if success, otherwise failed.
      *
      */
-    int ts_makeup_skin_beauty(TSMakeupData *pInData, TSMakeupData *pOutData, const TSRect *pFaceRect, int cleanLevel,int whiteLevel);
-    /*
+int ts_makeup_skin_beauty(TSMakeupData *pInData, TSMakeupData *pOutData, const TSRect *pFaceRect, int cleanLevel, int whiteLevel);
+/*
      * FUNCTION   : ts_makeup_skin_beautyEx
      *
      * DESCRIPTION: skin beauty method.
@@ -61,18 +59,17 @@
      * RETURN    : TS_OK if success, otherwise failed.
      *
      */
-    int ts_makeup_skin_beautyEx(TSMakeupDataEx *pInData, TSMakeupDataEx *pOutData, const TSRect *pFaceRect, int cleanLevel, int whiteLevel);
-    /*
+int ts_makeup_skin_beautyEx(TSMakeupDataEx *pInData, TSMakeupDataEx *pOutData, const TSRect *pFaceRect, int cleanLevel, int whiteLevel);
+/*
      * FUNCTION   : ts_makeup_finish
      *
      * DESCRIPTION: Finish makeup,call this method at last time.
      * This method MUST be called After ts_makeup_skin_clean and ts_makeup_skin_whiten
      *
      */
-    void ts_makeup_finish();
+void ts_makeup_finish();
 
-
-    /*
+/*
      * FUNCTION   : ts_makeup_warp_face
      *
      * DESCRIPTION: do warp face.
@@ -89,7 +86,7 @@
      * RETURN    : TS_OK if success, otherwise failed.
      *
      */
-    int ts_makeup_warp_face(TSMakeupData *pInData, TSMakeupData *pOutData,
-            const TSRect *pLeftEye, const TSRect *pRightEye, const TSRect *pMouth, int bigEyeLevel, int trimFaceLevel);
+int ts_makeup_warp_face(TSMakeupData *pInData, TSMakeupData *pOutData,
+                        const TSRect *pLeftEye, const TSRect *pRightEye, const TSRect *pMouth, int bigEyeLevel, int trimFaceLevel);
 
 #endif // __TS_MAKEUP_ENGINI_H__

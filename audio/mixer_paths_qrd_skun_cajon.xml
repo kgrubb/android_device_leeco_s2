@@ -51,9 +51,9 @@
     <ctl name="TTY Mode" value="OFF" />
     <!-- <ctl name="HPHL Volume" value="9" /> -->
     <!-- <ctl name="HPHR Volume" value="9" /> -->
-    <ctl name="RX1 Digital Volume" value="88" />
-    <ctl name="RX2 Digital Volume" value="88" />
-    <ctl name="RX3 Digital Volume" value="88" />
+    <ctl name="RX1 Digital Volume" value="84" />
+    <ctl name="RX2 Digital Volume" value="84" />
+    <ctl name="RX3 Digital Volume" value="84" />
     <ctl name="IIR1 INP1 Volume" value="84" />
     <ctl name="IIR1 INP2 Volume" value="84" />
     <ctl name="IIR1 INP3 Volume" value="84" />
@@ -297,10 +297,10 @@
         <path name="deep-buffer-playback" />
     </path>
 
-    <path name="deep-buffer-playback speaker-and-bt-sco-wb">
+   <path name="deep-buffer-playback speaker-and-bt-sco-wb">
         <path name="deep-buffer-playback bt-sco-wb" />
         <path name="deep-buffer-playback" />
-    </path>
+   </path>
 
     <path name="deep-buffer-playback afe-proxy">
         <ctl name="AFE_PCM_RX Audio Mixer MultiMedia1" value="1" />
@@ -441,7 +441,6 @@
     <path name="compress-offload-playback speaker-protected">
         <path name="compress-offload-playback" />
     </path>
-
     <path name="compress-offload-playback bt-sco">
         <ctl name="INTERNAL_BT_SCO_RX Audio Mixer MultiMedia4" value="1" />
     </path>
@@ -973,7 +972,7 @@
 
     <!-- for use with leeco audio hal -->
     <path name="hfp-sco-speaker">
-        <path name="hfp-sco smartpa" />       
+        <path name="hfp-sco smartpa" />
     </path>
 
     <path name="hfp-sco-wb">
@@ -1082,7 +1081,6 @@
     <path name="incall-rec-uplink-and-downlink-compress bt-sco-wb">
         <path name="incall-rec-uplink-and-downlink-compress" />
     </path>
-
     <path name="incall-rec-uplink-and-downlink usb-headset-mic">
         <path name="incall-rec-uplink-and-downlink" />
     </path>
@@ -1277,9 +1275,9 @@
         <ctl name="RX1 Digital Volume" value="84" />
         <ctl name="WSA Spk Switch" value="WSA" />
         <!-- <ctl name="SpkrMono WSA_RDAC" value="Switch" /> -->
-    </path>
+   </path>
 
-    <path name="spkr-rx-calib">
+   <path name="spkr-rx-calib">
         <ctl name="PRI_MI2S_RX_DL_HL Switch"  value="1" />
     </path>
 
@@ -1306,7 +1304,7 @@
     <path name="handset">
         <ctl name="RX1 MIX1 INP1" value="RX1" />
         <ctl name="RDAC2 MUX" value="RX1" />
-        <ctl name="RX1 Digital Volume" value="88" />
+        <ctl name="RX1 Digital Volume" value="90" />
         <ctl name="EAR PA Gain" value="POS_6_DB" />
         <ctl name="EAR_S" value="Switch" />
     </path>
@@ -1583,15 +1581,15 @@
     </path>
 
     <path name="line">
-         <path name="headphones" />
+        <path name="headphones" />
     </path>
 
     <path name="voice-line">
-         <path name="voice-headphones" />
+        <path name="voice-headphones" />
     </path>
 
     <path name="speaker-and-line">
-         <path name="speaker-and-headphones" />
+        <path name="speaker-and-headphones" />
     </path>
 
 </mixer>

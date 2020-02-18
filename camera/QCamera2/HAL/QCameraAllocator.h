@@ -30,34 +30,38 @@
 #ifndef __QCAMERA_ALLOCATOR__
 #define __QCAMERA_ALLOCATOR__
 
-extern "C" {
+extern "C"
+{
 #include <mm_camera_interface.h>
 }
 
-namespace qcamera {
+namespace qcamera
+{
 
 class QCameraMemory;
 class QCameraHeapMemory;
 
-typedef struct {
-    int32_t (*bgFunction) (void *);
-    void* bgArgs;
+typedef struct
+{
+  int32_t (*bgFunction)(void *);
+  void *bgArgs;
 } BackgroundTask;
 
-class QCameraAllocator {
+class QCameraAllocator
+{
 public:
-    virtual QCameraMemory *allocateStreamBuf(cam_stream_type_t stream_type,
-            size_t size, int stride, int scanline, uint8_t &bufferCnt) = 0;
-    virtual int32_t allocateMoreStreamBuf(QCameraMemory *mem_obj,
-            size_t size, uint8_t &bufferCnt) = 0;
-    virtual QCameraHeapMemory *allocateStreamInfoBuf(cam_stream_type_t stream_type) = 0;
-    virtual QCameraHeapMemory *allocateMiscBuf(cam_stream_info_t *streamInfo) = 0;
-    virtual QCameraMemory *allocateStreamUserBuf(cam_stream_info_t *streamInfo) = 0;
-    virtual void waitForDeferredAlloc(cam_stream_type_t stream_type) = 0;
-    virtual uint32_t scheduleBackgroundTask(BackgroundTask* bgTask) = 0;
-    virtual int32_t waitForBackgroundTask(uint32_t &taskId) = 0;
-    virtual ~QCameraAllocator() {}
+  virtual QCameraMemory *allocateStreamBuf(cam_stream_type_t stream_type,
+                                           size_t size, int stride, int scanline, uint8_t &bufferCnt) = 0;
+  virtual int32_t allocateMoreStreamBuf(QCameraMemory *mem_obj,
+                                        size_t size, uint8_t &bufferCnt) = 0;
+  virtual QCameraHeapMemory *allocateStreamInfoBuf(cam_stream_type_t stream_type) = 0;
+  virtual QCameraHeapMemory *allocateMiscBuf(cam_stream_info_t *streamInfo) = 0;
+  virtual QCameraMemory *allocateStreamUserBuf(cam_stream_info_t *streamInfo) = 0;
+  virtual void waitForDeferredAlloc(cam_stream_type_t stream_type) = 0;
+  virtual uint32_t scheduleBackgroundTask(BackgroundTask *bgTask) = 0;
+  virtual int32_t waitForBackgroundTask(uint32_t &taskId) = 0;
+  virtual ~QCameraAllocator() {}
 };
 
-}; /* namespace qcamera */
+};     /* namespace qcamera */
 #endif /* __QCAMERA_ALLOCATOR__ */

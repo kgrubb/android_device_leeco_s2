@@ -66,4 +66,26 @@ extract "${MY_DIR}/proprietary-files.txt" "${SRC}" ${KANG} --section "${SECTION}
 
 extract "${MY_DIR}/proprietary-files-qc.txt" "${SRC}" ${KANG} --section "${SECTION}"
 
+
+DEVICE_BLOB_ROOT="$LINEAGE_ROOT"/vendor/"$VENDOR"/"$DEVICE"/proprietary
+
+patchelf --remove-needed libbacktrace.so "$DEVICE_BLOB_ROOT"/vendor/bin/gx_fpcmd
+patchelf --remove-needed libunwind.so "$DEVICE_BLOB_ROOT"/vendor/bin/gx_fpcmd
+patchelf --remove-needed libkeystore_binder.so "$DEVICE_BLOB_ROOT"/vendor/bin/gx_fpcmd
+patchelf --remove-needed libsoftkeymasterdevice.so "$DEVICE_BLOB_ROOT"/vendor/bin/gx_fpcmd
+patchelf --remove-needed libsoftkeymaster.so "$DEVICE_BLOB_ROOT"/vendor/bin/gx_fpcmd
+patchelf --remove-needed libkeymaster_messages.so "$DEVICE_BLOB_ROOT"/vendor/bin/gx_fpcmd
+
+patchelf --remove-needed libbacktrace.so "$DEVICE_BLOB_ROOT"/vendor/bin/gx_fpd
+patchelf --remove-needed libunwind.so "$DEVICE_BLOB_ROOT"/vendor/bin/gx_fpd
+patchelf --remove-needed libkeystore_binder.so "$DEVICE_BLOB_ROOT"/vendor/bin/gx_fpd
+patchelf --remove-needed libsoftkeymasterdevice.so "$DEVICE_BLOB_ROOT"/vendor/bin/gx_fpd
+patchelf --remove-needed libsoftkeymaster.so "$DEVICE_BLOB_ROOT"/vendor/bin/gx_fpd
+patchelf --remove-needed libkeymaster_messages.so "$DEVICE_BLOB_ROOT"/vendor/bin/gx_fpd
+
+patchelf --replace-needed "libbase.so" "libbase-hax.so" $DEVICE_BLOB_ROOT/vendor/lib/lib-uceservice.so
+patchelf --replace-needed "libbase.so" "libbase-hax.so" $DEVICE_BLOB_ROOT/vendor/lib64/lib-uceservice.so
+patchelf --replace-needed "libbase.so" "libbase-hax.so" $DEVICE_BLOB_ROOT/vendor/bin/imsrcsd
+
+
 "${MY_DIR}/setup-makefiles.sh"

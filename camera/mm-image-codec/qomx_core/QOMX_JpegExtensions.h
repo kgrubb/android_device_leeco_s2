@@ -29,83 +29,86 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.*/
 #define __QOMX_EXTENSIONS_H__
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 #include <OMX_Image.h>
 #include <qexif.h>
 
-/** qomx_image_eventd
+  /** qomx_image_eventd
 *  Qcom specific events extended from OMX_EVENT
 *  @ OMX_EVENT_THUMBNAIL_DROPPED - Indicates that the thumbnail
 *                                 size id too big to be included
 *                                 in the exif and will be
 *                                 dropped
 **/
-typedef enum {
- OMX_EVENT_THUMBNAIL_DROPPED = OMX_EventVendorStartUnused+1
-} QOMX_IMAGE_EXT_EVENTS;
+  typedef enum
+  {
+    OMX_EVENT_THUMBNAIL_DROPPED = OMX_EventVendorStartUnused + 1
+  } QOMX_IMAGE_EXT_EVENTS;
 
 /**
 *  The following macros defines the string to be used for
 *  getting the extension indices.
 **/
-#define QOMX_IMAGE_EXT_EXIF_NAME                  "OMX.QCOM.image.exttype.exif"
-#define QOMX_IMAGE_EXT_THUMBNAIL_NAME        "OMX.QCOM.image.exttype.thumbnail"
+#define QOMX_IMAGE_EXT_EXIF_NAME "OMX.QCOM.image.exttype.exif"
+#define QOMX_IMAGE_EXT_THUMBNAIL_NAME "OMX.QCOM.image.exttype.thumbnail"
 #define QOMX_IMAGE_EXT_BUFFER_OFFSET_NAME "OMX.QCOM.image.exttype.bufferOffset"
-#define QOMX_IMAGE_EXT_MOBICAT_NAME            "OMX.QCOM.image.exttype.mobicat"
-#define QOMX_IMAGE_EXT_ENCODING_MODE_NAME        "OMX.QCOM.image.encoding.mode"
-#define QOMX_IMAGE_EXT_WORK_BUFFER_NAME      "OMX.QCOM.image.exttype.workbuffer"
-#define QOMX_IMAGE_EXT_METADATA_NAME      "OMX.QCOM.image.exttype.metadata"
-#define QOMX_IMAGE_EXT_META_ENC_KEY_NAME      "OMX.QCOM.image.exttype.metaEncKey"
-#define QOMX_IMAGE_EXT_MEM_OPS_NAME      "OMX.QCOM.image.exttype.mem_ops"
-#define QOMX_IMAGE_EXT_JPEG_SPEED_NAME      "OMX.QCOM.image.exttype.jpeg.speed"
-#define QOMX_IMAGE_EXT_MULTI_IMAGE_NAME  "OMX.QCOM.image.exttype.multi.image"
+#define QOMX_IMAGE_EXT_MOBICAT_NAME "OMX.QCOM.image.exttype.mobicat"
+#define QOMX_IMAGE_EXT_ENCODING_MODE_NAME "OMX.QCOM.image.encoding.mode"
+#define QOMX_IMAGE_EXT_WORK_BUFFER_NAME "OMX.QCOM.image.exttype.workbuffer"
+#define QOMX_IMAGE_EXT_METADATA_NAME "OMX.QCOM.image.exttype.metadata"
+#define QOMX_IMAGE_EXT_META_ENC_KEY_NAME "OMX.QCOM.image.exttype.metaEncKey"
+#define QOMX_IMAGE_EXT_MEM_OPS_NAME "OMX.QCOM.image.exttype.mem_ops"
+#define QOMX_IMAGE_EXT_JPEG_SPEED_NAME "OMX.QCOM.image.exttype.jpeg.speed"
+#define QOMX_IMAGE_EXT_MULTI_IMAGE_NAME "OMX.QCOM.image.exttype.multi.image"
 
-/** QOMX_IMAGE_EXT_INDEXTYPE
+  /** QOMX_IMAGE_EXT_INDEXTYPE
 *  This enum is an extension of the OMX_INDEXTYPE enum and
 *  specifies Qcom supported extention indexes. These indexes are
 *  associated with the extension names and can be used as
 *  Indexes in the SetParameter and Getparameter functins to set
 *  or get values from qcom specific data structures
 **/
-typedef enum {
-  //Name: OMX.QCOM.image.exttype.exif
-  QOMX_IMAGE_EXT_EXIF = 0x07F00000,
+  typedef enum
+  {
+    //Name: OMX.QCOM.image.exttype.exif
+    QOMX_IMAGE_EXT_EXIF = 0x07F00000,
 
-  //Name: OMX.QCOM.image.exttype.thumbnail
-  QOMX_IMAGE_EXT_THUMBNAIL = 0x07F00001,
+    //Name: OMX.QCOM.image.exttype.thumbnail
+    QOMX_IMAGE_EXT_THUMBNAIL = 0x07F00001,
 
-  //Name: OMX.QCOM.image.exttype.bufferOffset
-  QOMX_IMAGE_EXT_BUFFER_OFFSET = 0x07F00002,
+    //Name: OMX.QCOM.image.exttype.bufferOffset
+    QOMX_IMAGE_EXT_BUFFER_OFFSET = 0x07F00002,
 
-  //Name: OMX.QCOM.image.exttype.mobicat
-  QOMX_IMAGE_EXT_MOBICAT = 0x07F00003,
+    //Name: OMX.QCOM.image.exttype.mobicat
+    QOMX_IMAGE_EXT_MOBICAT = 0x07F00003,
 
-  //Name: OMX.QCOM.image.encoding.approach
-  QOMX_IMAGE_EXT_ENCODING_MODE = 0x07F00004,
+    //Name: OMX.QCOM.image.encoding.approach
+    QOMX_IMAGE_EXT_ENCODING_MODE = 0x07F00004,
 
-  //Name: OMX.QCOM.image.exttype.workbuffer
-  QOMX_IMAGE_EXT_WORK_BUFFER = 0x07F00005,
+    //Name: OMX.QCOM.image.exttype.workbuffer
+    QOMX_IMAGE_EXT_WORK_BUFFER = 0x07F00005,
 
-  //Name: OMX.QCOM.image.exttype.metadata
-  QOMX_IMAGE_EXT_METADATA = 0x07F00008,
+    //Name: OMX.QCOM.image.exttype.metadata
+    QOMX_IMAGE_EXT_METADATA = 0x07F00008,
 
-  //Name: OMX.QCOM.image.exttype.metaEncKey
-  QOMX_IMAGE_EXT_META_ENC_KEY = 0x07F00009,
+    //Name: OMX.QCOM.image.exttype.metaEncKey
+    QOMX_IMAGE_EXT_META_ENC_KEY = 0x07F00009,
 
-  //Name: OMX.QCOM.image.exttype.memOps
-  QOMX_IMAGE_EXT_MEM_OPS = 0x07F0000A,
+    //Name: OMX.QCOM.image.exttype.memOps
+    QOMX_IMAGE_EXT_MEM_OPS = 0x07F0000A,
 
-  //Name: OMX.QCOM.image.exttype.jpeg.speed
-  QOMX_IMAGE_EXT_JPEG_SPEED = 0x07F000B,
+    //Name: OMX.QCOM.image.exttype.jpeg.speed
+    QOMX_IMAGE_EXT_JPEG_SPEED = 0x07F000B,
 
-  //Name: OMX.QCOM.image.exttype.multi.image
-  QOMX_IMAGE_EXT_MULTI_IMAGE = 0x07F000C,
+    //Name: OMX.QCOM.image.exttype.multi.image
+    QOMX_IMAGE_EXT_MULTI_IMAGE = 0x07F000C,
 
-} QOMX_IMAGE_EXT_INDEXTYPE;
+  } QOMX_IMAGE_EXT_INDEXTYPE;
 
-/** QOMX_BUFFER_INFO
+  /** QOMX_BUFFER_INFO
 *  The structure specifies informaton
 *   associated with the buffers and should be passed as appData
 *   in UseBuffer calls to the OMX component with buffer specific
@@ -114,32 +117,35 @@ typedef enum {
 *   @offset - Buffer offset
 **/
 
-typedef struct {
-  OMX_U32 fd;
-  OMX_U32 offset;
-} QOMX_BUFFER_INFO;
+  typedef struct
+  {
+    OMX_U32 fd;
+    OMX_U32 offset;
+  } QOMX_BUFFER_INFO;
 
-/** QEXIF_INFO_DATA
+  /** QEXIF_INFO_DATA
 *   The basic exif structure used to construct
 *   information for a single exif tag.
 *   @tag_entry
 *   @tag_id
 **/
-typedef struct{
-  exif_tag_entry_t tag_entry;
-  exif_tag_id_t tag_id;
-} QEXIF_INFO_DATA;
+  typedef struct
+  {
+    exif_tag_entry_t tag_entry;
+    exif_tag_id_t tag_id;
+  } QEXIF_INFO_DATA;
 
-/** QEXTN_DATA
+  /** QEXTN_DATA
 *   The structure used to carry addtional payload
 *   meant to be in EXIF Appx marker fields.
 *   @sw_3a_version
 **/
-typedef struct {
-  uint16_t sw_3a_version[4];
-} QEXTN_DATA;
+  typedef struct
+  {
+    uint16_t sw_3a_version[4];
+  } QEXTN_DATA;
 
-/**QOMX_EXIF_INFO
+  /**QOMX_EXIF_INFO
 *  The structure contains an array of exif tag
 *  structures(qexif_info_data) and should be passed to the OMX
 *  layer by the OMX client using the extension index.
@@ -148,13 +154,14 @@ typedef struct {
 *                  the array
 *  @debug_data - specific debug information for internal use
 **/
-typedef struct {
-  QEXIF_INFO_DATA *exif_data;
-  OMX_U32 numOfEntries;
-  QEXTN_DATA debug_data;
-} QOMX_EXIF_INFO;
+  typedef struct
+  {
+    QEXIF_INFO_DATA *exif_data;
+    OMX_U32 numOfEntries;
+    QEXTN_DATA debug_data;
+  } QOMX_EXIF_INFO;
 
-/**QOMX_YUV_FRAME_INFO
+  /**QOMX_YUV_FRAME_INFO
 *  The structre contains all the offsets
 *  associated with the Y and cbcr buffers.
 *  @yOffset - Offset within the Y buffer
@@ -172,13 +179,14 @@ typedef struct {
 *                     array element needs to be filled and the
 *                     secnd element should be set to zero.
 **/
-typedef struct {
-  OMX_U32 yOffset;
-  OMX_U32 cbcrOffset[2];
-  OMX_U32 cbcrStartOffset[2];
-} QOMX_YUV_FRAME_INFO;
+  typedef struct
+  {
+    OMX_U32 yOffset;
+    OMX_U32 cbcrOffset[2];
+    OMX_U32 cbcrStartOffset[2];
+  } QOMX_YUV_FRAME_INFO;
 
-/** qomx_thumbnail_info
+  /** qomx_thumbnail_info
 *  Includes all information associated with the thumbnail
 *  @input_width - Width of the input thumbnail buffer
 *  @input_height - Heighr of the input thumbnail buffer
@@ -199,40 +207,43 @@ typedef struct {
 *                or height after cropping if only cropping is
 *                enabled or same same input height otherwise
 **/
-typedef struct {
-  OMX_U32 input_width;
-  OMX_U32 input_height;
-  OMX_U8 scaling_enabled;
-  OMX_U32 quality;
-  OMX_CONFIG_RECTTYPE crop_info;
-  OMX_U32 output_width;
-  OMX_U32 output_height;
-  QOMX_YUV_FRAME_INFO tmbOffset;
-  OMX_U32 rotation;
-} QOMX_THUMBNAIL_INFO;
+  typedef struct
+  {
+    OMX_U32 input_width;
+    OMX_U32 input_height;
+    OMX_U8 scaling_enabled;
+    OMX_U32 quality;
+    OMX_CONFIG_RECTTYPE crop_info;
+    OMX_U32 output_width;
+    OMX_U32 output_height;
+    QOMX_YUV_FRAME_INFO tmbOffset;
+    OMX_U32 rotation;
+  } QOMX_THUMBNAIL_INFO;
 
-/**qomx_mobicat
+  /**qomx_mobicat
 *  Mobicat data to padded tot he OMX layer
 *  @mobicatData - Mobicate data
 *  @mobicatDataLength - length of the mobicat data
 **/
-typedef struct {
-  OMX_U8 *mobicatData;
-  OMX_U32 mobicatDataLength;
-} QOMX_MOBICAT;
+  typedef struct
+  {
+    OMX_U8 *mobicatData;
+    OMX_U32 mobicatDataLength;
+  } QOMX_MOBICAT;
 
-/**qomx_workbuffer
+  /**qomx_workbuffer
 *  Ion buffer to be used for the H/W encoder
 *  @fd - FD of the buffer allocated
 *  @vaddr - Buffer address
 **/
-typedef struct {
-  int fd;
-  uint8_t *vaddr;
-  uint32_t length;
-} QOMX_WORK_BUFFER;
+  typedef struct
+  {
+    int fd;
+    uint8_t *vaddr;
+    uint32_t length;
+  } QOMX_WORK_BUFFER;
 
-/**QOMX_METADATA
+  /**QOMX_METADATA
  *
  * meta data to be set in EXIF
  * @metadata: Dynamic metadata associated with each image
@@ -240,53 +251,56 @@ typedef struct {
  * @mobicat_mask : Mobicat MASk
  * @static_metadata: Static metadata associated with each image
  */
-typedef struct {
-  OMX_U8  *metadata;
-  OMX_U32 metaPayloadSize;
-  OMX_U8 mobicat_mask;
-  OMX_U8 *static_metadata;
-} QOMX_METADATA;
+  typedef struct
+  {
+    OMX_U8 *metadata;
+    OMX_U32 metaPayloadSize;
+    OMX_U8 mobicat_mask;
+    OMX_U8 *static_metadata;
+  } QOMX_METADATA;
 
-/**QOMX_META_ENC_KEY
+  /**QOMX_META_ENC_KEY
  *
  * meta data encryption key
  */
-typedef struct {
-  OMX_U8  *metaKey;
-  OMX_U32 keyLen;
-} QOMX_META_ENC_KEY;
+  typedef struct
+  {
+    OMX_U8 *metaKey;
+    OMX_U32 keyLen;
+  } QOMX_META_ENC_KEY;
 
-/** QOMX_IMG_COLOR_FORMATTYPE
+  /** QOMX_IMG_COLOR_FORMATTYPE
 *  This enum is an extension of the OMX_COLOR_FORMATTYPE enum.
 *  It specifies Qcom supported color formats.
 **/
-typedef enum QOMX_IMG_COLOR_FORMATTYPE {
-  OMX_QCOM_IMG_COLOR_FormatYVU420SemiPlanar = OMX_COLOR_FormatVendorStartUnused + 0x300,
-  OMX_QCOM_IMG_COLOR_FormatYVU422SemiPlanar,
-  OMX_QCOM_IMG_COLOR_FormatYVU422SemiPlanar_h1v2,
-  OMX_QCOM_IMG_COLOR_FormatYUV422SemiPlanar_h1v2,
-  OMX_QCOM_IMG_COLOR_FormatYVU444SemiPlanar,
-  OMX_QCOM_IMG_COLOR_FormatYUV444SemiPlanar,
-  OMX_QCOM_IMG_COLOR_FormatYVU420Planar,
-  OMX_QCOM_IMG_COLOR_FormatYVU422Planar,
-  OMX_QCOM_IMG_COLOR_FormatYVU422Planar_h1v2,
-  OMX_QCOM_IMG_COLOR_FormatYUV422Planar_h1v2,
-  OMX_QCOM_IMG_COLOR_FormatYVU444Planar,
-  OMX_QCOM_IMG_COLOR_FormatYUV444Planar
-} QOMX_IMG_COLOR_FORMATTYPE;
+  typedef enum QOMX_IMG_COLOR_FORMATTYPE
+  {
+    OMX_QCOM_IMG_COLOR_FormatYVU420SemiPlanar = OMX_COLOR_FormatVendorStartUnused + 0x300,
+    OMX_QCOM_IMG_COLOR_FormatYVU422SemiPlanar,
+    OMX_QCOM_IMG_COLOR_FormatYVU422SemiPlanar_h1v2,
+    OMX_QCOM_IMG_COLOR_FormatYUV422SemiPlanar_h1v2,
+    OMX_QCOM_IMG_COLOR_FormatYVU444SemiPlanar,
+    OMX_QCOM_IMG_COLOR_FormatYUV444SemiPlanar,
+    OMX_QCOM_IMG_COLOR_FormatYVU420Planar,
+    OMX_QCOM_IMG_COLOR_FormatYVU422Planar,
+    OMX_QCOM_IMG_COLOR_FormatYVU422Planar_h1v2,
+    OMX_QCOM_IMG_COLOR_FormatYUV422Planar_h1v2,
+    OMX_QCOM_IMG_COLOR_FormatYVU444Planar,
+    OMX_QCOM_IMG_COLOR_FormatYUV444Planar
+  } QOMX_IMG_COLOR_FORMATTYPE;
 
-/** QOMX_ENCODING_MODE
+  /** QOMX_ENCODING_MODE
 *  This enum is used to select parallel encoding
 *  or sequential encoding for the thumbnail and
 *  main image
 **/
-typedef enum {
-  OMX_Serial_Encoding,
-  OMX_Parallel_Encoding
-} QOMX_ENCODING_MODE;
+  typedef enum
+  {
+    OMX_Serial_Encoding,
+    OMX_Parallel_Encoding
+  } QOMX_ENCODING_MODE;
 
-
-/**omx_jpeg_ouput_buf_t
+  /**omx_jpeg_ouput_buf_t
 *  Structure describing jpeg output buffer
 *  @handle - Handle to the containing class
 *  @mem_hdl - Handle to camera memory struct
@@ -294,54 +308,59 @@ typedef enum {
 *  @size - Buffer size
 *  @fd - file descriptor
 **/
-typedef struct {
-  void *handle;
-  void *mem_hdl;
-  int8_t isheap;
-  size_t size; /*input*/
-  void *vaddr;
-  int fd;
-} omx_jpeg_ouput_buf_t;
+  typedef struct
+  {
+    void *handle;
+    void *mem_hdl;
+    int8_t isheap;
+    size_t size; /*input*/
+    void *vaddr;
+    int fd;
+  } omx_jpeg_ouput_buf_t;
 
-/** QOMX_MEM_OPS
+  /** QOMX_MEM_OPS
 * Structure holding the function pointers to
 * buffer memory operations
 * @get_memory - function to allocate buffer memory
 * @psession - reference to jpeg session ptr
 **/
-typedef struct {
-  int (*get_memory)( omx_jpeg_ouput_buf_t *p_out_buf, void *p_jpeg_session);
-  void *psession;
-} QOMX_MEM_OPS;
+  typedef struct
+  {
+    int (*get_memory)(omx_jpeg_ouput_buf_t *p_out_buf, void *p_jpeg_session);
+    void *psession;
+  } QOMX_MEM_OPS;
 
-/** QOMX_JPEG_SPEED_MODE
+  /** QOMX_JPEG_SPEED_MODE
 * Enum specifying the values for the jpeg
 * speed mode setting
 **/
-typedef enum {
-  QOMX_JPEG_SPEED_MODE_NORMAL,
-  QOMX_JPEG_SPEED_MODE_HIGH
-} QOMX_JPEG_SPEED_MODE;
+  typedef enum
+  {
+    QOMX_JPEG_SPEED_MODE_NORMAL,
+    QOMX_JPEG_SPEED_MODE_HIGH
+  } QOMX_JPEG_SPEED_MODE;
 
-/** QOMX_JPEG_SPEED
+  /** QOMX_JPEG_SPEED
 * Structure used to set the jpeg speed mode
 * parameter
 * @speedMode - jpeg speed mode
 **/
-typedef struct {
-  QOMX_JPEG_SPEED_MODE speedMode;
-} QOMX_JPEG_SPEED;
+  typedef struct
+  {
+    QOMX_JPEG_SPEED_MODE speedMode;
+  } QOMX_JPEG_SPEED;
 
-/** OMX_IMAGE_TYPE
+  /** OMX_IMAGE_TYPE
 * Enum specifying the values for the jpeg
 * image type setting
 **/
-typedef enum {
-  QOMX_JPEG_IMAGE_TYPE_JPEG,
-  QOMX_JPEG_IMAGE_TYPE_MPO
-} OMX_IMAGE_TYPE;
+  typedef enum
+  {
+    QOMX_JPEG_IMAGE_TYPE_JPEG,
+    QOMX_JPEG_IMAGE_TYPE_MPO
+  } OMX_IMAGE_TYPE;
 
-/** QOMX_JPEG_IMAGE_SEQUENCE_INFO
+  /** QOMX_JPEG_IMAGE_SEQUENCE_INFO
 * Struct specifying the parameters for
 * sequence of jpeg images
 * @image_type : jpeg image type
@@ -349,14 +368,15 @@ typedef enum {
     primary image in the sequence
 * @num_of_images: Number of images in the sequence
 **/
-typedef struct {
-  OMX_IMAGE_TYPE image_type;
-  OMX_U8 is_primary_image;
-  OMX_U32 num_of_images;
-} QOMX_JPEG_MULTI_IMAGE_INFO;
+  typedef struct
+  {
+    OMX_IMAGE_TYPE image_type;
+    OMX_U8 is_primary_image;
+    OMX_U32 num_of_images;
+  } QOMX_JPEG_MULTI_IMAGE_INFO;
 
 #ifdef __cplusplus
- }
+}
 #endif
 
 #endif

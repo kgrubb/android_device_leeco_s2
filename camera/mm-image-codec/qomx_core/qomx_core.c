@@ -40,14 +40,13 @@ static int g_omxcore_cnt = 0;
 
 //Map the library name with the component name
 static const comp_info_t g_comp_info[] =
-{
-  { "OMX.qcom.image.jpeg.encoder", "libqomx_jpegenc.so" },
-  { "OMX.qcom.image.jpeg.decoder", "libqomx_jpegdec.so" },
-  { "OMX.qcom.image.jpeg.encoder_pipeline", "libqomx_jpegenc_pipe.so" }
-};
+    {
+        {"OMX.qcom.image.jpeg.encoder", "libqomx_jpegenc.so"},
+        {"OMX.qcom.image.jpeg.decoder", "libqomx_jpegdec.so"},
+        {"OMX.qcom.image.jpeg.encoder_pipeline", "libqomx_jpegenc_pipe.so"}};
 
 static int get_idx_from_handle(OMX_IN OMX_HANDLETYPE *ahComp, int *acompIndex,
-  int *ainstanceIndex);
+                               int *ainstanceIndex);
 
 /*==============================================================================
 * Function : OMX_Init
@@ -59,36 +58,42 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_Init()
 {
   OMX_ERRORTYPE rc = OMX_ErrorNone;
   int i = 0;
-  int comp_cnt = sizeof(g_comp_info)/sizeof(g_comp_info[0]);
+  int comp_cnt = sizeof(g_comp_info) / sizeof(g_comp_info[0]);
 
   pthread_mutex_lock(&g_omxcore_lock);
 
   /* check if core is created */
-  if (g_omxcore) {
+  if (g_omxcore)
+  {
     g_omxcore_cnt++;
     pthread_mutex_unlock(&g_omxcore_lock);
     return rc;
   }
 
-  if (comp_cnt > OMX_COMP_MAX_NUM) {
+  if (comp_cnt > OMX_COMP_MAX_NUM)
+  {
     ALOGE("%s:%d] cannot exceed max number of components",
-      __func__, __LINE__);
+          __func__, __LINE__);
     pthread_mutex_unlock(&g_omxcore_lock);
     return OMX_ErrorUndefined;
   }
   /* create new global object */
   g_omxcore = malloc(sizeof(omx_core_t));
-  if (g_omxcore) {
+  if (g_omxcore)
+  {
     memset(g_omxcore, 0x0, sizeof(omx_core_t));
 
     /* populate the library name and component name */
-    for (i = 0; i < comp_cnt; i++) {
+    for (i = 0; i < comp_cnt; i++)
+    {
       g_omxcore->component[i].comp_name = g_comp_info[i].comp_name;
       g_omxcore->component[i].lib_name = g_comp_info[i].lib_name;
     }
     g_omxcore->comp_cnt = comp_cnt;
     g_omxcore_cnt++;
-  } else {
+  }
+  else
+  {
     rc = OMX_ErrorInsufficientResources;
   }
   pthread_mutex_unlock(&g_omxcore_lock);
@@ -106,13 +111,16 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_Deinit()
 {
   pthread_mutex_lock(&g_omxcore_lock);
 
-  if (g_omxcore_cnt == 1) {
-    if (g_omxcore) {
+  if (g_omxcore_cnt == 1)
+  {
+    if (g_omxcore)
+    {
       free(g_omxcore);
       g_omxcore = NULL;
     }
   }
-  if (g_omxcore_cnt) {
+  if (g_omxcore_cnt)
+  {
     g_omxcore_cnt--;
   }
 
@@ -135,8 +143,10 @@ static int get_comp_from_list(char *comp_name)
   if (NULL == comp_name)
     return -1;
 
-  for (i = 0; i < g_omxcore->comp_cnt; i++) {
-    if (!strcmp(g_omxcore->component[i].comp_name, comp_name)) {
+  for (i = 0; i < g_omxcore->comp_cnt; i++)
+  {
+    if (!strcmp(g_omxcore->component[i].comp_name, comp_name))
+    {
       index = i;
       break;
     }
@@ -155,8 +165,10 @@ static int get_free_inst_idx(omx_core_component_t *p_comp)
 {
   int idx = -1, i = 0;
 
-  for (i = 0; i < OMX_COMP_MAX_INSTANCES; i++) {
-    if (NULL == p_comp->handle[i]) {
+  for (i = 0; i < OMX_COMP_MAX_INSTANCES; i++)
+  {
+    if (NULL == p_comp->handle[i])
+    {
       idx = i;
       break;
     }
@@ -171,10 +183,10 @@ static int get_free_inst_idx(omx_core_component_t *p_comp)
 * Description: Construct and load the requested omx library
 ==============================================================================*/
 OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_GetHandle(
-  OMX_OUT OMX_HANDLETYPE* handle,
-  OMX_IN OMX_STRING componentName,
-  OMX_IN OMX_PTR appData,
-  OMX_IN OMX_CALLBACKTYPE* callBacks)
+    OMX_OUT OMX_HANDLETYPE *handle,
+    OMX_IN OMX_STRING componentName,
+    OMX_IN OMX_PTR appData,
+    OMX_IN OMX_CALLBACKTYPE *callBacks)
 {
   OMX_ERRORTYPE rc = OMX_ErrorNone;
   int comp_idx = 0, inst_idx = 0;
@@ -184,7 +196,8 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_GetHandle(
   omx_core_component_t *p_core_comp = NULL;
   OMX_BOOL close_handle = OMX_FALSE;
 
-  if (NULL == handle) {
+  if (NULL == handle)
+  {
     ALOGE("%s:%d] Error invalid input ", __func__, __LINE__);
     return OMX_ErrorBadParameter;
   }
@@ -192,7 +205,8 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_GetHandle(
   pthread_mutex_lock(&g_omxcore_lock);
 
   comp_idx = get_comp_from_list(componentName);
-  if (comp_idx < 0) {
+  if (comp_idx < 0)
+  {
     ALOGE("%s:%d] Cannot find the component", __func__, __LINE__);
     pthread_mutex_unlock(&g_omxcore_lock);
     return OMX_ErrorInvalidComponent;
@@ -203,16 +217,19 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_GetHandle(
 
   //If component already present get the instance index
   inst_idx = get_free_inst_idx(p_core_comp);
-  if (inst_idx < 0) {
+  if (inst_idx < 0)
+  {
     ALOGE("%s:%d] Cannot alloc new instance", __func__, __LINE__);
     rc = OMX_ErrorInvalidComponent;
     goto error;
   }
 
-  if (FALSE == p_core_comp->open) {
+  if (FALSE == p_core_comp->open)
+  {
     /* load the library */
     p_core_comp->lib_handle = dlopen(p_core_comp->lib_name, RTLD_NOW);
-    if (NULL == p_core_comp->lib_handle) {
+    if (NULL == p_core_comp->lib_handle)
+    {
       ALOGE("%s:%d] Cannot load the library", __func__, __LINE__);
       rc = OMX_ErrorInvalidComponent;
       goto error;
@@ -221,11 +238,12 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_GetHandle(
     p_core_comp->open = TRUE;
     /* Init the component and get component functions */
     p_core_comp->create_comp_func = dlsym(p_core_comp->lib_handle,
-      "create_component_fns");
+                                          "create_component_fns");
     p_core_comp->get_instance = dlsym(p_core_comp->lib_handle, "getInstance");
 
     close_handle = OMX_TRUE;
-    if (!p_core_comp->create_comp_func || !p_core_comp->get_instance) {
+    if (!p_core_comp->create_comp_func || !p_core_comp->get_instance)
+    {
       ALOGE("%s:%d] Cannot maps the symbols", __func__, __LINE__);
       rc = OMX_ErrorInvalidComponent;
       goto error;
@@ -235,7 +253,8 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_GetHandle(
   /* Call the function from the address to create the obj */
   p_obj = (*p_core_comp->get_instance)();
   ALOGI("%s:%d] get instance pts is %p", __func__, __LINE__, p_obj);
-  if (NULL == p_obj) {
+  if (NULL == p_obj)
+  {
     ALOGE("%s:%d] Error cannot create object", __func__, __LINE__);
     rc = OMX_ErrorInvalidComponent;
     goto error;
@@ -243,7 +262,8 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_GetHandle(
 
   /* Call the function from the address to get the func ptrs */
   p_comp = (*p_core_comp->create_comp_func)(p_obj);
-  if (NULL == p_comp) {
+  if (NULL == p_comp)
+  {
     ALOGE("%s:%d] Error cannot create component", __func__, __LINE__);
     rc = OMX_ErrorInvalidComponent;
     goto error;
@@ -252,9 +272,10 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_GetHandle(
   *handle = p_core_comp->handle[inst_idx] = (OMX_HANDLETYPE)p_comp;
 
   ALOGD("%s:%d] handle = %p Instanceindex = %d,"
-    "comp_idx %d g_ptr %p", __func__, __LINE__,
-    p_core_comp->handle[inst_idx], inst_idx,
-    comp_idx, g_omxcore);
+        "comp_idx %d g_ptr %p",
+        __func__, __LINE__,
+        p_core_comp->handle[inst_idx], inst_idx,
+        comp_idx, g_omxcore);
 
   p_comp->SetCallbacks(p_comp, callBacks, appData);
   pthread_mutex_unlock(&g_omxcore_lock);
@@ -263,7 +284,8 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_GetHandle(
 
 error:
 
-  if (OMX_TRUE == close_handle) {
+  if (OMX_TRUE == close_handle)
+  {
     dlclose(p_core_comp->lib_handle);
     p_core_comp->lib_handle = NULL;
   }
@@ -281,13 +303,16 @@ error:
 * index and instance index for the component handle.
 ==============================================================================*/
 static int get_idx_from_handle(OMX_IN OMX_HANDLETYPE *ahComp, int *aCompIdx,
-  int *aInstIdx)
+                               int *aInstIdx)
 {
   int i = 0, j = 0;
-  for (i = 0; i < g_omxcore->comp_cnt; i++) {
-    for (j = 0; j < OMX_COMP_MAX_INSTANCES; j++) {
+  for (i = 0; i < g_omxcore->comp_cnt; i++)
+  {
+    for (j = 0; j < OMX_COMP_MAX_INSTANCES; j++)
+    {
       if ((OMX_COMPONENTTYPE *)g_omxcore->component[i].handle[j] ==
-        (OMX_COMPONENTTYPE *)ahComp) {
+          (OMX_COMPONENTTYPE *)ahComp)
+      {
         ALOGD("%s:%d] comp_idx %d inst_idx %d", __func__, __LINE__, i, j);
         *aCompIdx = i;
         *aInstIdx = j;
@@ -307,8 +332,10 @@ static int get_idx_from_handle(OMX_IN OMX_HANDLETYPE *ahComp, int *aCompIdx,
 static uint8_t is_comp_active(omx_core_component_t *p_core_comp)
 {
   uint8_t i = 0;
-  for (i = 0; i < OMX_COMP_MAX_INSTANCES; i++) {
-    if (NULL != p_core_comp->handle[i]) {
+  for (i = 0; i < OMX_COMP_MAX_INSTANCES; i++)
+  {
+    if (NULL != p_core_comp->handle[i])
+    {
       return TRUE;
     }
   }
@@ -322,7 +349,7 @@ static uint8_t is_comp_active(omx_core_component_t *p_core_comp)
 * Description: Deinit the omx component and remove it from the global list
 ==============================================================================*/
 OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_FreeHandle(
-  OMX_IN OMX_HANDLETYPE hComp)
+    OMX_IN OMX_HANDLETYPE hComp)
 {
   OMX_ERRORTYPE rc = OMX_ErrorNone;
   int comp_idx, inst_idx;
@@ -330,23 +357,25 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_FreeHandle(
   omx_core_component_t *p_core_comp = NULL;
 
   ALOGV("%s:%d] ", __func__, __LINE__);
-  if (hComp == NULL) {
+  if (hComp == NULL)
+  {
     return OMX_ErrorBadParameter;
   }
 
   pthread_mutex_lock(&g_omxcore_lock);
 
   p_comp = (OMX_COMPONENTTYPE *)hComp;
-  if (FALSE == get_idx_from_handle(hComp, &comp_idx, &inst_idx)) {
+  if (FALSE == get_idx_from_handle(hComp, &comp_idx, &inst_idx))
+  {
     ALOGE("%s:%d] Error invalid component", __func__, __LINE__);
     pthread_mutex_unlock(&g_omxcore_lock);
     return OMX_ErrorInvalidComponent;
   }
 
-
   //Deinit the component;
   rc = p_comp->ComponentDeInit(hComp);
-  if (rc != OMX_ErrorNone) {
+  if (rc != OMX_ErrorNone)
+  {
     /* Remove the handle from the comp structure */
     ALOGE("%s:%d] Error comp deinit failed", __func__, __LINE__);
     pthread_mutex_unlock(&g_omxcore_lock);
@@ -354,13 +383,16 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_FreeHandle(
   }
   p_core_comp = &g_omxcore->component[comp_idx];
   p_core_comp->handle[inst_idx] = NULL;
-  if (!is_comp_active(p_core_comp)) {
+  if (!is_comp_active(p_core_comp))
+  {
     rc = dlclose(p_core_comp->lib_handle);
     p_core_comp->lib_handle = NULL;
     p_core_comp->get_instance = NULL;
     p_core_comp->create_comp_func = NULL;
     p_core_comp->open = FALSE;
-  } else {
+  }
+  else
+  {
     ALOGI("%s:%d] Error Component is still Active", __func__, __LINE__);
   }
   pthread_mutex_unlock(&g_omxcore_lock);

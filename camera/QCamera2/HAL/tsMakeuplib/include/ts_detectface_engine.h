@@ -20,9 +20,9 @@
 #include "ts_makeup_data.h"
 #include "ts_makeup_image.h"
 
-    typedef void*                    TSHandle;
+typedef void *TSHandle;
 
-    /*===========================================================================
+/*===========================================================================
      * FUNCTION   : ts_detectface_create_context
      *
      * DESCRIPTION: create context.The method MUST call at first time.
@@ -31,10 +31,9 @@
      * RETURN    : TSHandle as the context handle
      *
      *==========================================================================*/
-    TSHandle ts_detectface_create_context();
+TSHandle ts_detectface_create_context();
 
-
-    /*===========================================================================
+/*===========================================================================
      * FUNCTION   : ts_detectface_destroy_context
      *
      * DESCRIPTION: destroy context. The method MUST call at last time.
@@ -46,10 +45,9 @@
      *
      *
      *==========================================================================*/
-    void ts_detectface_destroy_context(TSHandle* contexTSHandle);
+void ts_detectface_destroy_context(TSHandle *contexTSHandle);
 
-
-    /*===========================================================================
+/*===========================================================================
      * FUNCTION   : ts_detectface_detect
      *
      * DESCRIPTION: start detect.Before you MUST call ts_detectface_create_context method
@@ -62,9 +60,9 @@
      * RETURN    : int If less than zero failed, otherwise the number of the detected faces.
      *
      *==========================================================================*/
-    int ts_detectface_detect(TSHandle contexTSHandle, TSMakeupData *pInData);
+int ts_detectface_detect(TSHandle contexTSHandle, TSMakeupData *pInData);
 
-    /*===========================================================================
+/*===========================================================================
      * FUNCTION   : ts_detectface_detectEx
      *
      * DESCRIPTION: start detect.Before you MUST call ts_detectface_create_context method
@@ -77,8 +75,8 @@
      * RETURN    : int If less than zero failed, otherwise the number of the detected faces.
      *
      *==========================================================================*/
-    int ts_detectface_detectEx(TSHandle contexTSHandle, TSMakeupDataEx *pInData);
-    /*===========================================================================
+int ts_detectface_detectEx(TSHandle contexTSHandle, TSMakeupDataEx *pInData);
+/*===========================================================================
      * FUNCTION   : ts_detectface_get_face_info
      *
      * DESCRIPTION: get detected face information.Before you MUST call ts_detectface_detect method
@@ -95,6 +93,6 @@
      * RETURN    : TS_OK if success, otherwise failed.
      *
      *==========================================================================*/
-    int ts_detectface_get_face_info(TSHandle contexTSHandle, int index, TSRect *pFaceRect, TSRect *leftEye, TSRect *rightEye, TSRect *pMouth);
+int ts_detectface_get_face_info(TSHandle contexTSHandle, int index, TSRect *pFaceRect, TSRect *leftEye, TSRect *rightEye, TSRect *pMouth);
 
 #endif // __TS_DETECTFACE_ENGINE_H__

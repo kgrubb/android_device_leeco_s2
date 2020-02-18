@@ -30,60 +30,62 @@
 #ifndef __QCAMERA_THERMAL_ADAPTER__
 #define __QCAMERA_THERMAL_ADAPTER__
 
-namespace qcamera {
+namespace qcamera
+{
 
-typedef enum {
-    QCAMERA_THERMAL_NO_ADJUSTMENT = 0,
-    QCAMERA_THERMAL_SLIGHT_ADJUSTMENT,
-    QCAMERA_THERMAL_BIG_ADJUSTMENT,
-    QCAMERA_THERMAL_MAX_ADJUSTMENT,
-    QCAMERA_THERMAL_SHUTDOWN = 10
+typedef enum
+{
+  QCAMERA_THERMAL_NO_ADJUSTMENT = 0,
+  QCAMERA_THERMAL_SLIGHT_ADJUSTMENT,
+  QCAMERA_THERMAL_BIG_ADJUSTMENT,
+  QCAMERA_THERMAL_MAX_ADJUSTMENT,
+  QCAMERA_THERMAL_SHUTDOWN = 10
 } qcamera_thermal_level_enum_t;
 
-typedef enum {
-    QCAMERA_THERMAL_ADJUST_FPS,
-    QCAMERA_THERMAL_ADJUST_FRAMESKIP,
+typedef enum
+{
+  QCAMERA_THERMAL_ADJUST_FPS,
+  QCAMERA_THERMAL_ADJUST_FRAMESKIP,
 } qcamera_thermal_mode;
 
 class QCameraThermalCallback
 {
 public:
-    virtual int thermalEvtHandle(qcamera_thermal_level_enum_t *level,
-            void *userdata, void *data) = 0;
-    virtual ~QCameraThermalCallback() {}
-    qcamera_thermal_level_enum_t *getThermalLevel();
-    void setThermalLevel(qcamera_thermal_level_enum_t level);
+  virtual int thermalEvtHandle(qcamera_thermal_level_enum_t *level,
+                               void *userdata, void *data) = 0;
+  virtual ~QCameraThermalCallback() {}
+  qcamera_thermal_level_enum_t *getThermalLevel();
+  void setThermalLevel(qcamera_thermal_level_enum_t level);
 
 private:
-    qcamera_thermal_level_enum_t mLevel;
+  qcamera_thermal_level_enum_t mLevel;
 };
 
 class QCameraThermalAdapter
 {
 public:
-    static QCameraThermalAdapter& getInstance();
+  static QCameraThermalAdapter &getInstance();
 
-    int init(QCameraThermalCallback *thermalCb);
-    void deinit();
+  int init(QCameraThermalCallback *thermalCb);
+  void deinit();
 
 private:
-    static char mStrCamera[];
-    static char mStrCamcorder[];
+  static char mStrCamera[];
+  static char mStrCamcorder[];
 
-    static int thermalCallback(int level, void *userdata, void *data);
+  static int thermalCallback(int level, void *userdata, void *data);
 
-    QCameraThermalCallback *mCallback;
-    void *mHandle;
-    int (*mRegister)(char *name,
-            int (*callback)(int, void *userdata, void *data), void *data);
-    int (*mUnregister)(int handle);
-    int mCameraHandle;
-    int mCamcorderHandle;
+  QCameraThermalCallback *mCallback;
+  void *mHandle;
+  int (*mRegister)(char *name,
+                   int (*callback)(int, void *userdata, void *data), void *data);
+  int (*mUnregister)(int handle);
+  int mCameraHandle;
+  int mCamcorderHandle;
 
-    QCameraThermalAdapter();
-    QCameraThermalAdapter(QCameraThermalAdapter const& copy); // not implemented
-    QCameraThermalAdapter& operator=(QCameraThermalAdapter const& copy); // not implemented
-
+  QCameraThermalAdapter();
+  QCameraThermalAdapter(QCameraThermalAdapter const &copy);            // not implemented
+  QCameraThermalAdapter &operator=(QCameraThermalAdapter const &copy); // not implemented
 };
 
 }; // namespace qcamera

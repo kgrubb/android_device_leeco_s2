@@ -59,92 +59,92 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.*/
 /* MPO Dependent Type */
 typedef enum
 {
-   NON_DEPENDENT_IMAGE    = 0x00000000,   // Non dependent image
-   DEPENDENT_CHILD_IMAGE  = 0x40000000,   // Dependent child image flag
-   DEPENDENT_PARENT_IMAGE = 0x80000000,   // Dependent parent image flag
-   DEPENDENT_MASK         = 0xc0000000,   // Dependent mask
-   DEPENDENT_MAX,
+  NON_DEPENDENT_IMAGE = 0x00000000,    // Non dependent image
+  DEPENDENT_CHILD_IMAGE = 0x40000000,  // Dependent child image flag
+  DEPENDENT_PARENT_IMAGE = 0x80000000, // Dependent parent image flag
+  DEPENDENT_MASK = 0xc0000000,         // Dependent mask
+  DEPENDENT_MAX,
 } qmpo_dependent_t;
 
 /* MPO Representative Type */
 typedef enum
 {
-  NOT_REPRESENTATIVE_IMAGE = 0x00000000,   // Not a representative image
-  REPRESENTATIVE_IMAGE     = 0x20000000,   // Representative image flag
-  REPRESENTATIVE_MASK      = 0x20000000,   // Representative mask
+  NOT_REPRESENTATIVE_IMAGE = 0x00000000, // Not a representative image
+  REPRESENTATIVE_IMAGE = 0x20000000,     // Representative image flag
+  REPRESENTATIVE_MASK = 0x20000000,      // Representative mask
   REPRESENTATIVE_MAX,
 } qmpo_representative_t;
 
 /* MPO Image Data Format Type */
 typedef enum
 {
-  JPEG                   = 0x00000000,   // Image is in JPEG format
-  NON_JPEG               = 0x07000000,   // Image is not JPEG
-  IMAGE_DATA_FORMAT_MASK = 0x07000000,   // Image mask
+  JPEG = 0x00000000,                   // Image is in JPEG format
+  NON_JPEG = 0x07000000,               // Image is not JPEG
+  IMAGE_DATA_FORMAT_MASK = 0x07000000, // Image mask
   IMAGE_DATA_FORMAT_MAX,
 } qmpo_image_data_format_t;
 
 /* MPO Type */
 typedef enum
 {
-  UNDEFINED              = 0x00000000,   // MP types undefined
-  LARGE_TN_CLASS_1       = 0x00010001,   // Large thumbnail class 1 image
-  LARGE_TN_CLASS_2       = 0x00010002,   // Large thumbnail class 2 image
-  MULTI_VIEW_PANORAMA    = 0x00020001,   // Multi-view Panorama image
-  MULTI_VIEW_DISPARITY   = 0x00020002,   // Multi-view Disparity image
-  MULTI_VIEW_MULTI_ANGLE = 0x00020003,   // Multi-view Multi-angle image
-  BASELINE_PRIMARY       = 0x00030000,   // Baseline MP Primary image
-  TYPE_MASK              = 0x00ffffff,   // Type mask
+  UNDEFINED = 0x00000000,              // MP types undefined
+  LARGE_TN_CLASS_1 = 0x00010001,       // Large thumbnail class 1 image
+  LARGE_TN_CLASS_2 = 0x00010002,       // Large thumbnail class 2 image
+  MULTI_VIEW_PANORAMA = 0x00020001,    // Multi-view Panorama image
+  MULTI_VIEW_DISPARITY = 0x00020002,   // Multi-view Disparity image
+  MULTI_VIEW_MULTI_ANGLE = 0x00020003, // Multi-view Multi-angle image
+  BASELINE_PRIMARY = 0x00030000,       // Baseline MP Primary image
+  TYPE_MASK = 0x00ffffff,              // Type mask
   TYPE_MAX,
 } qmpo_type_t;
 
 // MP Format Version
 // Use MPOTAGTYPE_MP_F_VERSION as the exif_tag_type (EXIF_UNDEFINED)
 // Count should be 4
-#define _ID_MP_F_VERSION_FIRST           0xb000
-#define MPOTAGID_MP_F_VERSION_FIRST      CONSTRUCT_TAGID(MP_F_VERSION_FIRST, _ID_MP_F_VERSION_FIRST)
-#define MPOTAGTYPE_MP_F_VERSION_FIRST    EXIF_UNDEFINED
+#define _ID_MP_F_VERSION_FIRST 0xb000
+#define MPOTAGID_MP_F_VERSION_FIRST CONSTRUCT_TAGID(MP_F_VERSION_FIRST, _ID_MP_F_VERSION_FIRST)
+#define MPOTAGTYPE_MP_F_VERSION_FIRST EXIF_UNDEFINED
 
 // Number of Images
 // Use MPOTAGTYPE_NUMBER_OF_IMAGES as the exif_tag_type (EXIF_LONG)
 // Count should be 1
-#define _ID_NUMBER_OF_IMAGES             0xb001
-#define MPOTAGID_NUMBER_OF_IMAGES        CONSTRUCT_TAGID(NUMBER_OF_IMAGES, _ID_NUMBER_OF_IMAGES)
-#define MPOTAGTYPE_NUMBER_OF_IMAGES      EXIF_LONG
+#define _ID_NUMBER_OF_IMAGES 0xb001
+#define MPOTAGID_NUMBER_OF_IMAGES CONSTRUCT_TAGID(NUMBER_OF_IMAGES, _ID_NUMBER_OF_IMAGES)
+#define MPOTAGTYPE_NUMBER_OF_IMAGES EXIF_LONG
 
 // MP Entry
 // Use MPOTAGTYPE_MP_ENTRY as the exif_tag_type (EXIF_UNDEFINED)
 // Count should be 16 x NumberOfImages
-#define _ID_MP_ENTRY                     0xb002
-#define MPOTAGID_MP_ENTRY                CONSTRUCT_TAGID(MP_ENTRY, _ID_MP_ENTRY)
-#define MPOTAGTYPE_MP_ENTRY              EXIF_UNDEFINED
+#define _ID_MP_ENTRY 0xb002
+#define MPOTAGID_MP_ENTRY CONSTRUCT_TAGID(MP_ENTRY, _ID_MP_ENTRY)
+#define MPOTAGTYPE_MP_ENTRY EXIF_UNDEFINED
 
 // Individual Image Unique ID List
 // Use MPOTAGTYPE_IMAGE_UID_LIST as the exif_tag_type (EXIF_UNDEFINED)
 // Count should be 33 x NumberOfImages
-#define _ID_IMAGE_UID_LIST               0xb003
-#define MPOTAGID_IMAGE_UID_LIST          CONSTRUCT_TAGID(IMAGE_UID_LIST, _ID_IMAGE_UID_LIST)
-#define MPOTAGTYPE_IMAGE_UID_LIST        EXIF_UNDEFINED
+#define _ID_IMAGE_UID_LIST 0xb003
+#define MPOTAGID_IMAGE_UID_LIST CONSTRUCT_TAGID(IMAGE_UID_LIST, _ID_IMAGE_UID_LIST)
+#define MPOTAGTYPE_IMAGE_UID_LIST EXIF_UNDEFINED
 
 // Total Number of Camptured Frames
 // Use MPOTAGTYPE_TOTAL_FRAMES as the exif_tag_type (EXIF_LONG)
 // Count should be 1
-#define _ID_TOTAL_FRAMES                 0xb004
-#define MPOTAGID_TOTAL_FRAMES            CONSTRUCT_TAGID(TOTAL_FRAMES, _ID_TOTAL_FRAMES)
-#define MPOTAGTYPE_TOTAL_FRAMES          EXIF_LONG
+#define _ID_TOTAL_FRAMES 0xb004
+#define MPOTAGID_TOTAL_FRAMES CONSTRUCT_TAGID(TOTAL_FRAMES, _ID_TOTAL_FRAMES)
+#define MPOTAGTYPE_TOTAL_FRAMES EXIF_LONG
 
 // MP Format Version
 // Use MPOTAGTYPE_MP_F_VERSION as the exif_tag_type (EXIF_UNDEFINED)
 // Count should be 4
-#define _ID_MP_F_VERSION                 0xb000
-#define MPOTAGID_MP_F_VERSION            CONSTRUCT_TAGID(MP_F_VERSION, _ID_MP_F_VERSION)
-#define MPOTAGTYPE_MP_F_VERSION          EXIF_UNDEFINED
+#define _ID_MP_F_VERSION 0xb000
+#define MPOTAGID_MP_F_VERSION CONSTRUCT_TAGID(MP_F_VERSION, _ID_MP_F_VERSION)
+#define MPOTAGTYPE_MP_F_VERSION EXIF_UNDEFINED
 
 // MP Individual Image Number
 // Use MPOTAGTYPE_MP_INDIVIDUAL_NUM as the exif_tag_type (EXIF_LONG)
 // Count should be 1
-#define _ID_MP_INDIVIDUAL_NUM            0xb101
-#define MPOTAGID_MP_INDIVIDUAL_NUM       CONSTRUCT_TAGID(MP_INDIVIDUAL_NUM, _ID_MP_INDIVIDUAL_NUM)
-#define MPOTAGTYPE_MP_INDIVIDUAL_NUM     EXIF_LONG
+#define _ID_MP_INDIVIDUAL_NUM 0xb101
+#define MPOTAGID_MP_INDIVIDUAL_NUM CONSTRUCT_TAGID(MP_INDIVIDUAL_NUM, _ID_MP_INDIVIDUAL_NUM)
+#define MPOTAGTYPE_MP_INDIVIDUAL_NUM EXIF_LONG
 
 #endif
